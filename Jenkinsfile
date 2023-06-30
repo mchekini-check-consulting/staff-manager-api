@@ -20,6 +20,8 @@ node("ci-node") {
             sh "sudo docker login -u mchekini -p $password"
             sh "sudo docker tag staff-manager-api mchekini/staff-manager-api:1.0"
             sh "sudo docker push mchekini/staff-manager-api:1.0"
+            sh "sudo docker rmi mchekini/staff-manager-api:1.0"
+            sh "sudo docker rmi staff-manager-api"
             stash includes: 'docker-compose.yml', name: 'utils'
         }
     }
@@ -33,7 +35,7 @@ node("ci-node") {
                 sh "sudo docker-compose up -d"
 
             }catch (Exception e){
-                println "No Running Docker Compose Running"
+                println "No Docker Compose Running"
                 sh "sudo docker-compose pull"
                 sh "sudo docker-compose up -d"
             }
