@@ -1,0 +1,14 @@
+version: '2'
+services:
+  staff-manager-api:
+    container_name: staff-manager-api
+    image: mchekini/staff-manager-api:1.0
+    ports:
+      - "8080:8080"
+
+networks:
+  default:
+    external:
+      name: staff-manager
+
+
