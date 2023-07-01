@@ -4,6 +4,15 @@ node("ci-node") {
         checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mchekini-check-consulting/staff-manager-api']])
     }
 
+    stage("Quality Analyses"){
+
+        sh "chmod 700 mvnw && ./mvnw clean verify sonar:sonar \\\n" +
+                "  -Dsonar.projectKey=staff-manager-api \\\n" +
+                "  -Dsonar.projectName='staff-manager-api' \\\n" +
+                "  -Dsonar.host.url=http://ci.check-consulting.net:11001 \\\n" +
+                "  -Dsonar.token=sqp_5083a3124779353423b8a578cf6ef5f598dd8721"
+    }
+
     stage("build") {
         sh "chmod 777 mvnw"
         sh "./mvnw clean package -DskipTests=true"
