@@ -1,0 +1,11 @@
+version: '2'
+services:
+  staff-manager-db:
+    image: postgres
+    container_name: staff-manager-db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres

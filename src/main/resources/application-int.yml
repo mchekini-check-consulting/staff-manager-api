@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://database-1.chqar689pasc.us-east-2.rds.amazonaws.com:5432/postgres
+    username: postgres
+    password: staff-manager
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: validate
+      naming:
+        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
