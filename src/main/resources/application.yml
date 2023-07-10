@@ -1,3 +1,9 @@
 app:
   name: staff-manager-api
   version: 1.0.0
+
+oauth2:
+  resource-server:
+    jwt:
+      issuer-uri-collab: http://ci.check-consulting.net:10000/auth/realms/staff-manager-collab
+      issuer-uri-admin: http://ci.check-consulting.net:10000/auth/realms/staff-manager-admin
