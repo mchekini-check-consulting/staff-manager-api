@@ -7,3 +7,7 @@ oauth2:
     jwt:
       issuer-uri-collab: http://ci.check-consulting.net:10000/auth/realms/staff-manager-collab
       issuer-uri-admin: http://ci.check-consulting.net:10000/auth/realms/staff-manager-admin
+
+spring:
+  profiles:
+    active: int
