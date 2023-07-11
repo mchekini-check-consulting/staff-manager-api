@@ -11,3 +11,6 @@ oauth2:
 spring:
   profiles:
     active: int
+
+#server:
+#  port: 8082
