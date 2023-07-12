@@ -42,7 +42,7 @@ public class AuthenticatedAspect {
         boolean isAuthenticated = signature.getMethod().getAnnotation(Authenticated.class).authenticated();
 
         if (isAuthenticated && !user.isAuthenticated()) response.sendError(401);
-        else if (user.getRoles() != null && user.getRoles().stream().noneMatch(roles::contains))
+        else if (!roles.isEmpty() && user.getRoles() != null && user.getRoles().stream().noneMatch(roles::contains))
             response.sendError(403);
 
     }
