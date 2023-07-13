@@ -14,6 +14,7 @@ import com.example.staffmanagerapi.service.ActivityService;
 import com.example.staffmanagerapi.service.CollaboratorService;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -58,7 +59,9 @@ public class ActivityUnitTest {
     Mockito
       .lenient()
       .when(collaboratorService.findCollaboratorByEmail(user.getEmail()))
-      .thenReturn(Collaborator.builder().email(user.getEmail()).build());
+      .thenReturn(
+        Optional.of(Collaborator.builder().email(user.getEmail()).build())
+      );
 
     // WHERE
     List<Activity> newActivities =

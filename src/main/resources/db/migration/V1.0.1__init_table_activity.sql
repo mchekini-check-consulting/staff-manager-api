@@ -3,6 +3,6 @@ create table if not exists activity (
     collaborator_id bigint,
     date date,
     quantity int,
-    category smallint,
+    category varchar,
     comment varchar(255)
 );

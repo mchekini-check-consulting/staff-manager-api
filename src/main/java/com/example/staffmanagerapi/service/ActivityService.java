@@ -6,28 +6,25 @@ import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.ActivityRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ActivityService {
 
-  @Autowired
-  private ActivityRepository activityRepository;
+    private final ActivityRepository activityRepository;
+    private final CollaboratorService collaboratorService;
 
-  @Autowired
-  private CollaboratorService collaboratorService;
+    public ActivityService(ActivityRepository activityRepository1, CollaboratorService collaboratorService1) {
+        this.activityRepository = activityRepository1;
+        this.collaboratorService = collaboratorService1;
+    }
 
-  public ActivityService(
-    ActivityRepository activityRepository,
-    CollaboratorService collaboratorService
-  ) {}
-
-  public List<Activity> createActivities(User user, List<ActivityDto> data) {
-    Optional<Collaborator> collaborator =
-      this.collaboratorService.findCollaboratorByEmail(user.getEmail());
+    public List<Activity> createActivities(User user, List<ActivityDto> data) {
+        Optional<Collaborator> collaborator =
+                this.collaboratorService.findCollaboratorByEmail(user.getEmail());
 
     if (!collaborator.isPresent()) throw new EntityNotFoundException(
       "Collaborator doesn't exist."
@@ -47,6 +44,6 @@ public class ActivityService {
       )
       .toList();
 
-    return this.activityRepository.saveAll(records);
-  }
+        return this.activityRepository.saveAll(records);
+    }
 }
