@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class CollaboratorIntegrationTest {
+class CollaboratorIntegrationTest {
 
 
 
@@ -23,7 +23,7 @@ public class CollaboratorIntegrationTest {
     private int port;
 
     @Test
-    public void shouldCreateCollaborator() throws Exception{
+    void shouldCreateCollaborator() throws Exception{
 
         //Given
         HttpEntity<Collaborator> requestEntyt = new HttpEntity<>(Collaborator.builder()
