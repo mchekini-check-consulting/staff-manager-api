@@ -13,8 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
                 title = "Staff Manager API",
                 description = "vous pouvez faire un appel a http://localhost:8082/v3/api-docs ou l'URL docker pour recevoir un JSON, faites un copier coller dans fichier externe, avec l'extension .JSON, ensuite pour l'importez dans Postman > import > collection",
                 contact = @Contact(
-                        name = "Mehdi Chekini",
-                        email = "test-email-a-changer@gmail.com",
+                        name = "M. Chekini",
                         url = "https://github.com/mchekini-check-consulting"
                 ),
                 version = "1.0.alpha"
@@ -22,11 +21,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         servers = {
                 @Server(
                         url = "http://localhost:8082",
-                        description = "local : Intellij IDEA ( c'est l'URL de votre backend locale )"
+                        description = "local : Intellij IDEA"
                 ),
                 @Server(
-                        url = "http://aws.url-api-heberge-sur-docker.a-changer.com",
-                        description = "Remote docker thing ( c'est l'URL du backend hébergé avec docker )"
+                        url = "http://staff-manager-api:8080",
+                        description = "Remote docker"
                 )
         }
 )
