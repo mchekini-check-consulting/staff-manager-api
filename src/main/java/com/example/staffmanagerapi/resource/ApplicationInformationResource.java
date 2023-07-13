@@ -21,6 +21,7 @@ public class ApplicationInformationResource {
 
     @GetMapping("details")
     public AppInformation getAppInformations() {
+        log.info("application name = {}, version = {}", appInformation.getName(), appInformation.getVersion());
         return AppInformation.builder()
                 .version(appInformation.getVersion())
                 .name(appInformation.getName())
