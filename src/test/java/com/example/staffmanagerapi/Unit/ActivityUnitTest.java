@@ -1,14 +1,15 @@
 package com.example.staffmanagerapi.Unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 
-import com.example.staffmanagerapi.dto.activity.in.CreateActivityInDto;
+import com.example.staffmanagerapi.dto.activity.ActivityDto;
 import com.example.staffmanagerapi.enums.ActivityCategoryEnum;
 import com.example.staffmanagerapi.model.Activity;
 import com.example.staffmanagerapi.repository.ActivityRepository;
 import com.example.staffmanagerapi.service.ActivityService;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,24 +40,26 @@ public class ActivityUnitTest {
 
     Mockito
       .lenient()
-      .when(activityRepository.save(any(Activity.class)))
-      .thenReturn(activity);
+      .when(activityRepository.saveAll(anyList()))
+      .thenReturn(List.of(activity));
 
     // WHERE
-    Activity newActivity =
-      this.activityService.createActivity(
-          CreateActivityInDto
-            .builder()
-            .date(activity.getDate())
-            .category(activity.getCategory())
-            .quantity(activity.getQuantity())
-            .comment(activity.getComment())
-            .build()
+    List<Activity> newActivities =
+      this.activityService.createActivities(
+          List.of(
+            ActivityDto
+              .builder()
+              .date(activity.getDate())
+              .category(activity.getCategory())
+              .quantity(activity.getQuantity())
+              .comment(activity.getComment())
+              .build()
+          )
         );
 
     // THEN
-    assertEquals(activity.getDate(), newActivity.getDate());
-    assertEquals(activity.getQuantity(), newActivity.getQuantity());
-    assertEquals(activity.getCategory(), newActivity.getCategory());
+    assertEquals(activity.getDate(), newActivities.get(0).getDate());
+    assertEquals(activity.getQuantity(), newActivities.get(0).getQuantity());
+    assertEquals(activity.getCategory(), newActivities.get(0).getCategory());
   }
 }
