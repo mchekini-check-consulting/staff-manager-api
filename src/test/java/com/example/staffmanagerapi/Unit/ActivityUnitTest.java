@@ -6,8 +6,12 @@ import static org.mockito.ArgumentMatchers.anyList;
 import com.example.staffmanagerapi.dto.activity.ActivityDto;
 import com.example.staffmanagerapi.enums.ActivityCategoryEnum;
 import com.example.staffmanagerapi.model.Activity;
+import com.example.staffmanagerapi.model.Collaborator;
+import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.ActivityRepository;
+import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.service.ActivityService;
+import com.example.staffmanagerapi.service.CollaboratorService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -24,11 +28,19 @@ public class ActivityUnitTest {
   private ActivityService activityService;
 
   @Mock
+  private CollaboratorService collaboratorService;
+
+  @Mock
   private ActivityRepository activityRepository;
+
+  @Mock
+  private CollaboratorRepository collaboratorRepository;
 
   @Test
   public void itShouldCreateAnActivity() {
     // GIVEN
+    User user = User.builder().email("test@test.com").build();
+
     Activity activity = Activity
       .builder()
       .id(1)
@@ -43,9 +55,15 @@ public class ActivityUnitTest {
       .when(activityRepository.saveAll(anyList()))
       .thenReturn(List.of(activity));
 
+    Mockito
+      .lenient()
+      .when(collaboratorService.findCollaboratorByEmail(user.getEmail()))
+      .thenReturn(Collaborator.builder().email(user.getEmail()).build());
+
     // WHERE
     List<Activity> newActivities =
       this.activityService.createActivities(
+          user,
           List.of(
             ActivityDto
               .builder()

@@ -4,9 +4,6 @@ package com.example.staffmanagerapi.service;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,5 +19,9 @@ public class CollaboratorService {
     public Collaborator add(Collaborator collaborator){
         collaboratorRepository.save(collaborator);
         return collaborator;
+    }
+
+    public Collaborator findCollaboratorByEmail(String email){
+        return collaboratorRepository.findByEmail(email);
     }
 }

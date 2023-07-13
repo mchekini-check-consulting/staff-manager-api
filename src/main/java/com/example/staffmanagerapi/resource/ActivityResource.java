@@ -2,6 +2,7 @@ package com.example.staffmanagerapi.resource;
 
 import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.activity.in.CreateActivityInDto;
+import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.ActivityService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,15 @@ public class ActivityResource {
   @Autowired
   private ActivityService activityService;
 
+  @Autowired
+  private User user;
+
   @PostMapping
   @Authenticated(authenticated = true, hasAnyRoles = { "collab" })
   public ResponseEntity<?> createActivities(
     @RequestBody @Valid CreateActivityInDto data
   ) {
-    this.activityService.createActivities(data.getActivities());
+    this.activityService.createActivities(user, data.getActivities());
     return ResponseEntity.status(HttpStatusCode.valueOf(201)).build();
   }
 }

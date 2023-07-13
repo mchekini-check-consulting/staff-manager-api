@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CollaboratorRepository extends JpaRepository<Collaborator,Long> {
+    Collaborator findByEmail(String email);
 }
