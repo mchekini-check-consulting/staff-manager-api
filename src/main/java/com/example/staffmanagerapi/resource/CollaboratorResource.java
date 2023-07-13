@@ -2,8 +2,11 @@ package com.example.staffmanagerapi.resource;
 
 import com.example.staffmanagerapi.service.CollaboratorService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/collaborator")
+@Slf4j
 public class CollaboratorResource {
 
     private final CollaboratorService collaboratorService;
@@ -27,8 +31,19 @@ public class CollaboratorResource {
 
     @PostMapping("")
     public ResponseEntity addCollaborator(@Valid @RequestBody Collaborator collaborator){
-        System.out.println(collaborator);
-        return collaboratorService.add(collaborator);
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        log.info("Ajout du collaborateur {}", collaborator.getEmail());
+
+        collaboratorService.add(collaborator);
+
+        log.info("Le collaborateur avec l'email {} est renregistré avec succès", collaborator.getEmail());
+
+        responseHeaders.set("Location","api/v1/collaborator/"+collaborator.getId().toString());
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(201))
+                .headers(responseHeaders)
+                .body(collaborator);
     }
 
 

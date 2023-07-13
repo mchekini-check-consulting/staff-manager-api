@@ -24,11 +24,11 @@ public class Collaborator {
     private Long id;
 
     @Column(name = "firstname")
-    @NotBlank(message = "prénom est obligatoire")
+    @NotBlank(message = "le champ prénom est obligatoire")
     private String firstName;
 
     @Column(name = "lastname")
-    @NotBlank(message = "nom est obligatoire")
+    @NotBlank(message = "le champ nom est obligatoire")
     private String lastName;
 
     @NotBlank(message = "le champ adresse est obligatoire")
