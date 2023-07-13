@@ -7,6 +7,7 @@ import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.ActivityRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,16 @@ public class ActivityService {
   @Autowired
   private CollaboratorService collaboratorService;
 
+  public ActivityService(
+    ActivityRepository activityRepository,
+    CollaboratorService collaboratorService
+  ) {}
+
   public List<Activity> createActivities(User user, List<ActivityDto> data) {
-    Collaborator collaborator =
+    Optional<Collaborator> collaborator =
       this.collaboratorService.findCollaboratorByEmail(user.getEmail());
 
-    if (collaborator == null) throw new EntityNotFoundException(
+    if (!collaborator.isPresent()) throw new EntityNotFoundException(
       "Collaborator doesn't exist."
     );
 
@@ -36,7 +42,7 @@ public class ActivityService {
           .quantity(row.getQuantity())
           .category(row.getCategory())
           .comment(row.getComment())
-          .collaborator(collaborator)
+          .collaborator(collaborator.get())
           .build()
       )
       .toList();

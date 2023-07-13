@@ -20,6 +20,8 @@ public class ActivityResource {
   @Autowired
   private ActivityService activityService;
 
+  public ActivityResource(ActivityService ActivityService) {}
+
   @Autowired
   private User user;
 
