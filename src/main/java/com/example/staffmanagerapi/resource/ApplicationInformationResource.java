@@ -2,13 +2,12 @@ package com.example.staffmanagerapi.resource;
 
 import com.example.staffmanagerapi.model.AppInformation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api/v1/app",produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("api/v1/app")
 @Slf4j
 public class ApplicationInformationResource {
 
