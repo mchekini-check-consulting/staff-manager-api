@@ -1,20 +1,20 @@
 package com.example.staffmanagerapi.dto;
 
+import com.example.staffmanagerapi.validators.EmailNotAlreadyExists;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Component
 public class CustomerCreationDto {
     @Email(message = "Email invalide")
     @NotEmpty(message = "Email invalide")
+    @EmailNotAlreadyExists(message = "l'email du client existe déjà")
     private String customerEmail;
 
     @NotBlank(message = "Nom du client invalide")
@@ -27,7 +27,7 @@ public class CustomerCreationDto {
     @NotNull(message = "Le numéro de téléphone doit contenir 10 chiffres")
     private String customerPhone;
 
-    @Pattern(regexp = "^fr\\d{11}$", message = "Numéro TVA non valide")
+    @Pattern(regexp = "^FR\\d{11}$", message = "Numéro TVA non valide")
     @NotNull(message = "Numéro TVA non valide")
     private String customerTvaNumber;
 }

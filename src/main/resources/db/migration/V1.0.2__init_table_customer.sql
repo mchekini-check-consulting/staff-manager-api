@@ -1,6 +1,6 @@
 create table if not exists customer
 (
-    customer_id BIGSERIAL primary key,
+    customer_id  BIGSERIAL PRIMARY KEY,
     customer_email varchar ,
     customer_name  varchar,
     customer_address varchar,
