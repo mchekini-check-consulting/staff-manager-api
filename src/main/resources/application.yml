@@ -10,4 +10,4 @@ oauth2:
 
 spring:
   profiles:
-    active: local
+    active: int
