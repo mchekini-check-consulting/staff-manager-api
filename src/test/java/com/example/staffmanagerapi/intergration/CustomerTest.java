@@ -11,82 +11,48 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 class CustomerTest {
 
     @LocalServerPort
     Integer port;
 
+    private final TestRestTemplate restTemplate;
+
     @Autowired
-    private TestRestTemplate restTemplate;
+    public CustomerTest(TestRestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
 
     @Test
-    public void ItShoulAddNewCustomer() {
+    void ItShouldAddNewCustomerWithSuccess() {
+
+        // GIVEN
         Customer customer = Customer.builder()
                 .customerEmail("sephora@gmail.com")
                 .customerName("Sephora")
                 .customerAddress("france")
                 .customerPhone("0123456789")
-                .customerTvaNumber("fr01234567890")
+                .customerTvaNumber("FR01234567890")
                 .build();
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Customer> requestEntity = new HttpEntity<>(customer, headers);
 
-        ResponseEntity<Object> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/customer",
-                requestEntity,
-                Object.class
-        );
+        // WHEN
+        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
 
-        Map<?, ?> responseHandler = convertResponseEntityToMap(response.getBody());
-        Map<String, String> resultMap = convertFieldsErrorsToHashMap(responseHandler.get("data"));
-
-        assertEquals(201, responseHandler.get("statusCode"));
-
-//        assertEquals(400, responseHandler.get("statusCode"));
-//        assertEquals(true, resultMap.keySet().contains("customerName"));
-//        assertEquals(true, resultMap.keySet().contains("customerAddress"));
-//        assertEquals(true, resultMap.keySet().contains("customerPhone"));
-//        assertEquals(true, resultMap.keySet().contains("customerTvaNumber"));
-//        assertEquals(true, resultMap.keySet().contains("customerEmail"));
-
+        // THEN
+        assertEquals(201, response.getStatusCode().value());
     }
 
-    public Map convertResponseEntityToMap(Object liste) {
-        Map<?, ?> data = null;
-        if (liste instanceof Map) {
-            data = (Map<?, ?>) liste;
-            return data;
-        }
-        return null;
-    }
-
-    public Map<String, String> convertFieldsErrorsToHashMap(Object liste) {
-        if (liste instanceof List) {
-            List<?> dataList = (List<?>) liste;
-            Map<String, String> resultMap = new HashMap<>();
-
-            for (Object item : dataList) {
-                if (item instanceof Map) {
-                    Map<?, ?> itemData = (Map<?, ?>) item;
-                    String field = (String) itemData.get("field");
-                    String errorMessage = (String) itemData.get("errorMessage");
-                    resultMap.put(field, errorMessage);
-                }
-            }
-            return resultMap;
-        }
-        return null;
-    }
 }

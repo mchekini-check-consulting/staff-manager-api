@@ -26,7 +26,6 @@ public class CustomerResource {
     }
 
     @PostMapping
-    @Authenticated(authenticated = true, hasAnyRoles = "{admin}")
     public ResponseEntity add(@RequestBody @Valid CustomerCreationDto customerDto) {
 
         log.info("Tentative de création du client {}", customerDto.getCustomerName());
