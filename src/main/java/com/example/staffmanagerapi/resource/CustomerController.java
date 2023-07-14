@@ -53,7 +53,8 @@ public class CustomerController {
         } catch (FieldsValidatorException e) {
             return Response(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), e.getErrors());
         } catch (Exception e) {
-            return Response(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.value(), null);
+            log.error(String.valueOf(e));
+        return Response(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.value(), null);
         }
     }
 }

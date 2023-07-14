@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Entity
 public class Customer {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
-    @SequenceGenerator(name="customer_seq", sequenceName = "customer_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
+//    @SequenceGenerator(name="customer_seq", sequenceName = "customer_seq", allocationSize = 1)
     private Long customerId;
 
     private String customerEmail;
