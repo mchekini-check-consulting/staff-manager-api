@@ -11,21 +11,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @OpenAPIDefinition(
         info = @Info(
                 title = "Staff Manager API",
-                description = "vous pouvez faire un appel a http://localhost:8082/v3/api-docs ou l'URL docker pour recevoir un JSON, faites un copier coller dans fichier externe, avec l'extension .JSON, ensuite pour l'importez dans Postman > import > collection",
+                description = "Sur Postman cliquez sur Import => coller cet url : 'http://check-consulting.net:8080/v3/api-docs' , ensuite choisir 'Postman Collection'",
                 contact = @Contact(
                         name = "M. Chekini",
                         url = "https://github.com/mchekini-check-consulting"
                 ),
-                version = "1.0.alpha"
+                version = "1"
         ),
         servers = {
                 @Server(
-                        url = "http://localhost:8082",
-                        description = "local : Intellij IDEA"
+                        url = "http://check-consulting.net:8080",
+                        description = "Serveur Environnement integration"
                 ),
                 @Server(
-                        url = "http://staff-manager-api:8080",
-                        description = "Remote docker"
+                        url = "http://localhost:8080",
+                        description = "Serveur Environnement local : Intellij IDEA"
                 )
         }
 )
