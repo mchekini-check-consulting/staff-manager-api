@@ -1,8 +1,6 @@
 package com.example.staffmanagerapi.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,20 +13,21 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class CustomerCreationDto {
-
-    @Pattern(regexp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w\\w+)(\\s)*$",
-            message = "Email non valide")
+    @Email(message = "Email invalide")
+    @NotEmpty(message = "Email invalide")
     private String customerEmail;
 
-    @NotBlank
+    @NotBlank(message = "Nom du client invalide")
     private String customerName;
 
-    @NotBlank
+    @NotBlank(message = "Addresse invalide")
     private String customerAddress;
 
-    @Pattern(regexp = "^\\d{10}$", message="Le numero de telephone doit contenir 10 chiffres")
+    @Pattern(regexp = "^\\d{10}$", message = "Le numéro de téléphone doit contenir 10 chiffres")
+    @NotNull(message = "Le numéro de téléphone doit contenir 10 chiffres")
     private String customerPhone;
 
-    @Pattern(regexp = "^fr\\d{11}$", message="Numero TVA non valide")
+    @Pattern(regexp = "^fr\\d{11}$", message = "Numéro TVA non valide")
+    @NotNull(message = "Numéro TVA non valide")
     private String customerTvaNumber;
 }

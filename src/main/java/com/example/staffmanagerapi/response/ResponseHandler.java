@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseHandler {
     private Object error;
-    private String message;
     private Integer statusCode;
     private Object data;
 }

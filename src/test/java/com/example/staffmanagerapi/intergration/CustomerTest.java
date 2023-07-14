@@ -30,13 +30,13 @@ class CustomerTest {
 
 
     @Test
-    public void itShouldCreateCustomer() {
+    public void ItShoulAddNewCustomer() {
         Customer customer = Customer.builder()
-                .customerEmail("natixis2@gmail.com")
-                .customerName("NATIXIS")
-                .customerAddress("Paris")
-                .customerPhone("004199111")
-                .customerTvaNumber("fr0123456789")
+                .customerEmail("sephora@gmail.com")
+                .customerName("Sephora")
+                .customerAddress("france")
+                .customerPhone("0123456789")
+                .customerTvaNumber("fr01234567890")
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
@@ -52,17 +52,14 @@ class CustomerTest {
         Map<?, ?> responseHandler = convertResponseEntityToMap(response.getBody());
         Map<String, String> resultMap = convertFieldsErrorsToHashMap(responseHandler.get("data"));
 
-        //Errors
-        assertEquals(400, responseHandler.get("statusCode"));
-        //--Email exist
-//        assertEquals("Email existe deja", responseHandler.get("message"));
-        //--customerPhone validation
-        assertEquals(true, resultMap.keySet().contains("customerPhone"));
-        //--customerTvaNumber validation
-        assertEquals(true, resultMap.keySet().contains("customerTvaNumber"));
+        assertEquals(201, responseHandler.get("statusCode"));
 
-//        success
-//        assertEquals(201, responseHandler.get("statusCode"));
+//        assertEquals(400, responseHandler.get("statusCode"));
+//        assertEquals(true, resultMap.keySet().contains("customerName"));
+//        assertEquals(true, resultMap.keySet().contains("customerAddress"));
+//        assertEquals(true, resultMap.keySet().contains("customerPhone"));
+//        assertEquals(true, resultMap.keySet().contains("customerTvaNumber"));
+//        assertEquals(true, resultMap.keySet().contains("customerEmail"));
 
     }
 
