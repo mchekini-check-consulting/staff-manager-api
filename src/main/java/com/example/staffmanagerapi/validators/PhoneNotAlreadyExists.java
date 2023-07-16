@@ -1,6 +1,5 @@
 package com.example.staffmanagerapi.validators;
 
-
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,10 +13,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = EmailAlreadyExistsValidator.class)
-public @interface EmailNotAlreadyExists {
-
-    String message() default "Email Already Exist";
+@Constraint(validatedBy = PhoneAlreadyExistsValidator.class)
+public @interface PhoneNotAlreadyExists {
+    String message() default "Numéro de téléphone existe déja";
 
     Class<?>[] groups() default {};
 

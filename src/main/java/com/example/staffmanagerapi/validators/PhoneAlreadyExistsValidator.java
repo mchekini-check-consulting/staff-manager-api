@@ -4,16 +4,15 @@ import com.example.staffmanagerapi.repository.CustomerRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class CustomerAlreadyExistsValidator implements ConstraintValidator<EmailNotAlreadyExists, String> {
-
+public class PhoneAlreadyExistsValidator implements ConstraintValidator<PhoneNotAlreadyExists, String> {
     private final CustomerRepository customerRepository;
 
-    public CustomerAlreadyExistsValidator(CustomerRepository customerRepository) {
+    public PhoneAlreadyExistsValidator(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     @Override
-    public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
-        return !(customerRepository.existsByCustomerEmail(email));
+    public boolean isValid(String phone, ConstraintValidatorContext constraintValidatorContext) {
+        return !(customerRepository.existsByCustomerPhone(phone));
     }
 }

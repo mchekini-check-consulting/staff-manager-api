@@ -39,11 +39,11 @@ class CustomerTest {
 
         // GIVEN
         Customer customer = Customer.builder()
-                .customerEmail("sephora@gmail.com")
-                .customerName("Sephora")
+                .customerEmail("kpmg@gmail.com")
+                .customerName("kpmg")
                 .customerAddress("france")
-                .customerPhone("0123456789")
-                .customerTvaNumber("FR01234567890")
+                .customerPhone("0123456719")
+                .customerTvaNumber("FR01234597890")
                 .build();
 
 
@@ -124,15 +124,25 @@ class CustomerTest {
                 .customerTvaNumber("FR01234567890")
                 .build();
 
+        Customer customer2 = Customer.builder()
+                .customerEmail("sephora@gmail.com")
+                .customerName("Sepho Ra")
+                .customerAddress("france")
+                .customerPhone("0123456780")
+                .customerTvaNumber("FR01234567891")
+                .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         HttpEntity<Customer> requestEntity = new HttpEntity<>(customer, headers);
         restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
 
+        HttpEntity<Customer> requestEntity2 = new HttpEntity<>(customer2, headers);
+
 
         // WHEN
-        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
+        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity2, Object.class);
 
         // THEN
         Map<String, String> errors = (Map<String, String>) response.getBody();
@@ -142,4 +152,40 @@ class CustomerTest {
         assertTrue(errors.get("customerEmail").equals("l'email du client existe déjà"));
     }
 
+    @Test
+    void ItShouldDisplayAnErrorWhenEmailAndPhoneAndTvaNumAndNameAlreadyExist() {
+
+        // GIVEN
+        Customer customer = Customer.builder()
+                .customerEmail("sephora@gmail.com")
+                .customerName("Sephora")
+                .customerAddress("france")
+                .customerPhone("0123456789")
+                .customerTvaNumber("FR01234567890")
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Customer> requestEntity = new HttpEntity<>(customer, headers);
+        restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
+
+
+        // WHEN
+        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
+
+        // THEN
+        Map<String, String> errors = (Map<String, String>) response.getBody();
+        log.info("errors==" + errors);
+        assertEquals(400, response.getStatusCode().value());
+        assertTrue(errors.keySet().contains("customerEmail"));
+        assertTrue(errors.keySet().contains("customerPhone"));
+        assertTrue(errors.keySet().contains("customerTvaNumber"));
+        assertTrue(errors.keySet().contains("customerName"));
+
+        assertTrue(errors.get("customerEmail").equals("l'email du client existe déjà"));
+        assertTrue(errors.get("customerPhone").equals("Numéro de téléphone existe déja"));
+        assertTrue(errors.get("customerTvaNumber").equals("Numéro du TVA existe déja"));
+        assertTrue(errors.get("customerName").equals("Nom du client existe déja"));
+    }
 }
