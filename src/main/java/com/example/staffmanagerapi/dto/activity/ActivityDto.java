@@ -22,7 +22,7 @@ public class ActivityDto {
 
   @NotNull
   @Positive
-  @Max(18)
+  @Max(8)
   private Integer quantity;
 
   @NotNull
