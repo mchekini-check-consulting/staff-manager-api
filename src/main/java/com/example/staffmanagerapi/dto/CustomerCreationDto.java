@@ -1,6 +1,6 @@
 package com.example.staffmanagerapi.dto;
 
-import com.example.staffmanagerapi.validators.EmailNotAlreadyExists;
+import com.example.staffmanagerapi.validators.customer.EmailNotAlreadyExists;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
