@@ -1,4 +1,5 @@
 package com.example.staffmanagerapi.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,8 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
+import java.util.Set;
 
 
 @Data
@@ -40,5 +40,9 @@ public class Collaborator {
 
     @Size(min = 10,max = 10,message = "le numéro de téléphone doit contenir 10 chiffres")
     @NotBlank(message = "le champ numéro de téléphone est obligatoire")
-    private String phone;    
+    private String phone;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "collaborator")
+    private Set<Mission> missions;
 }

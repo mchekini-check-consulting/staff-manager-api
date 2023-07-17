@@ -4,14 +4,13 @@ package com.example.staffmanagerapi.aspect.authenticated;
 import com.example.staffmanagerapi.model.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,10 +31,10 @@ public class AuthenticatedAspect {
         this.response = response;
     }
 
-    @Before("execution(* *(..)) && @annotation(Authenticated)")
-    public void before(JoinPoint joinPoint) throws IOException {
+    @Around("execution(* *(..)) && @annotation(Authenticated)")
+    public void before(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
 
         Set<String> roles = Arrays.stream(signature.getMethod().getAnnotation(Authenticated.class).hasAnyRoles())
                 .collect(Collectors.toSet());
@@ -44,6 +43,7 @@ public class AuthenticatedAspect {
         if (isAuthenticated && !user.isAuthenticated()) response.sendError(401);
         else if (!roles.isEmpty() && user.getRoles() != null && user.getRoles().stream().noneMatch(roles::contains))
             response.sendError(403);
+        else proceedingJoinPoint.proceed();
 
     }
 }
