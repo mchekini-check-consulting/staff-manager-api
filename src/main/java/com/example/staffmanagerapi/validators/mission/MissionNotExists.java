@@ -1,4 +1,4 @@
-package com.example.staffmanagerapi.validators;
+package com.example.staffmanagerapi.validators.mission;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -14,10 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = CustomerNotExistsValidator.class)
-public @interface CustomerNotExists {
+@Constraint(validatedBy = MissionNotExistsValidator.class)
+public @interface MissionNotExists {
 
-    String message() default "Le client n'existe pas";
+    String message() default "La nom de la mission existe déjà";
 
     Class<?>[] groups() default {};
 

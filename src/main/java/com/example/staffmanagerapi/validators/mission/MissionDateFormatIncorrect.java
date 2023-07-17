@@ -1,5 +1,4 @@
-package com.example.staffmanagerapi.validators;
-
+package com.example.staffmanagerapi.validators.mission;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -14,10 +13,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = CustomerAlreadyExistsValidator.class)
-public @interface EmailNotAlreadyExists {
-
-    String message() default "Email Already Exist";
+@Constraint(validatedBy = MissionDateFormatIncorrectValidator.class)
+public @interface MissionDateFormatIncorrect {
+    String message() default "La date est incorrecte";
 
     Class<?>[] groups() default {};
 
