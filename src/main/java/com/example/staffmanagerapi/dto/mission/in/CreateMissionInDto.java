@@ -1,13 +1,11 @@
 package com.example.staffmanagerapi.dto.mission.in;
 
 import com.example.staffmanagerapi.utils.Constants;
-import com.example.staffmanagerapi.validators.CollaboratorNotExists;
-import com.example.staffmanagerapi.validators.CustomerNotExists;
-import com.example.staffmanagerapi.validators.MissionNotExists;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import com.example.staffmanagerapi.validators.collaborator.CollaboratorNotExists;
+import com.example.staffmanagerapi.validators.customer.CustomerNotExists;
+import com.example.staffmanagerapi.validators.mission.MissionDateFormatIncorrect;
+import com.example.staffmanagerapi.validators.mission.MissionNotExists;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,9 +23,11 @@ public class CreateMissionInDto {
     private String nameMission;
     @NotBlank(message = "champ obligatoire")
     @Pattern(regexp = Constants.DATE_REGEX, message = "Date invalide")
+    @MissionDateFormatIncorrect
     private String startingDateMission;
     @NotBlank(message = "champ obligatoire")
     @Pattern(regexp = Constants.DATE_REGEX, message = "Date invalide")
+    @MissionDateFormatIncorrect
     private String endingDateMission;
 
     @CollaboratorNotExists

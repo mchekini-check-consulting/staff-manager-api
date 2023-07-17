@@ -1,4 +1,4 @@
-package com.example.staffmanagerapi.validators;
+package com.example.staffmanagerapi.validators.mission;
 
 import com.example.staffmanagerapi.repository.MissionRepository;
 import jakarta.validation.ConstraintValidator;
