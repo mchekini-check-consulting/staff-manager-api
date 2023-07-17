@@ -124,25 +124,15 @@ class CustomerTest {
                 .customerTvaNumber("FR01234567890")
                 .build();
 
-        Customer customer2 = Customer.builder()
-                .customerEmail("sephora@gmail.com")
-                .customerName("Sepho Ra")
-                .customerAddress("france")
-                .customerPhone("0123456780")
-                .customerTvaNumber("FR01234567891")
-                .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         HttpEntity<Customer> requestEntity = new HttpEntity<>(customer, headers);
         restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
 
-        HttpEntity<Customer> requestEntity2 = new HttpEntity<>(customer2, headers);
-
 
         // WHEN
-        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity2, Object.class);
+        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/customer", requestEntity, Object.class);
 
         // THEN
         Map<String, String> errors = (Map<String, String>) response.getBody();
