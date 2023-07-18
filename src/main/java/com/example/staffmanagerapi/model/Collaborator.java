@@ -1,9 +1,8 @@
 package com.example.staffmanagerapi.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,11 +33,11 @@ public class Collaborator {
     @NotBlank(message = "le champ adresse est obligatoire")
     private String address;
 
-    @Email(message = "Entre une adresse mail valide")
+    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "Entrer une adresse Email valide")
     @NotBlank(message = "le champ Email est obligatoire")
     private String email;
 
-    @Size(min = 10,max = 10,message = "le numéro de téléphone doit contenir 10 chiffres")
+    @Pattern(regexp = "^\\d{10}$", message = "Le numéro de téléphone doit contenir 10 chiffres")
     @NotBlank(message = "le champ numéro de téléphone est obligatoire")
     private String phone;
 
