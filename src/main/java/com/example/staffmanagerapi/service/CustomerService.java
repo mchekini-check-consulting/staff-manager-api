@@ -1,11 +1,14 @@
 package com.example.staffmanagerapi.service;
 
 import com.example.staffmanagerapi.dto.CustomerCreationDto;
+import com.example.staffmanagerapi.dto.customer.CustomerDto;
+import com.example.staffmanagerapi.dto.customer.out.GetCustomersOutDto;
 import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.repository.CustomerRepository;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,7 +31,18 @@ public class CustomerService {
     customerRepository.save(customerEntity);
   }
 
-  public List<Customer> getCustomers() {
-    return this.customerRepository.findAll();
+  public GetCustomersOutDto getCustomers() {
+    List<Customer> customers = this.customerRepository.findAll();
+
+    modelMapper
+      .typeMap(Customer.class, CustomerDto.class)
+      .addMapping(Customer::getCustomerId, CustomerDto::setId);
+
+    List<CustomerDto> parsedCustomers = modelMapper.map(
+      customers,
+      new TypeToken<List<CustomerDto>>() {}.getType()
+    );
+
+    return GetCustomersOutDto.builder().customers(parsedCustomers).build();
   }
 }
