@@ -11,3 +11,11 @@ oauth2:
 spring:
   profiles:
     active: int
+
+
+
+# AWS
+aws:
+  access-key-id: AKIAS7WDEOQ4EJUQXRA4
+  secret-access.key: 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
+  region: us-east-1
