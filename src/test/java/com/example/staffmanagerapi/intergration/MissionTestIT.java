@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -146,16 +147,15 @@ class MissionTestIT {
         missionRepository.save(mission2);
 
         //When
-        ResponseEntity<String> response = new RestTemplate().exchange(
+        ResponseEntity<List> response = new RestTemplate().exchange(
                 "http://localhost:"+port+"/api/v1/mission",
                 HttpMethod.GET,
                 null,
-                String.class
+                List.class
         );
-
         //Then
         assertEquals(HttpStatusCode.valueOf(200),response.getStatusCode());
-        assertEquals(false,response.getBody().isEmpty());
+        assertEquals(2,response.getBody().size());
 
     }
 }

@@ -6,6 +6,7 @@ import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.service.MissionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,6 @@ public class MissionResource {
     @GetMapping()
     public ResponseEntity getAllMissions(){
         List<MissionDto> missions = missionService.missions();
-        return ResponseEntity.status(HttpStatusCode.valueOf(200))
-                .body(missions);
+        return ResponseEntity.ok(missions);
     }
 }
