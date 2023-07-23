@@ -11,12 +11,14 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.io.IOException;
+import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
+import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
+import com.example.staffmanagerapi.enums.DocumentTypeEnum;
+
 
 @RestController
 @RequestMapping("api/v1/justificatif")
@@ -36,4 +38,14 @@ public class DocumentResource {
         this.documentService.uploadFile(dto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("search")
+    // @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
+    public ResponseEntity search(@Valid @RequestBody DocumentSearchRequestDTO searchRequest){
+        List<Long> collaboratorIds = searchRequest.getCollaborators();
+        List<DocumentTypeEnum> types = searchRequest.getTypes();
+        List<DocumentSearchResponseDTO> documents = documentService.getDocumentsWithFilters(collaboratorIds, types);
+        return ResponseEntity.status(HttpStatus.OK).body(documents);
+    }
+
 }

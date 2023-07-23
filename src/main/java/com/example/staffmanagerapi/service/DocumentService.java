@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
+import com.example.staffmanagerapi.utils.DocumentSpecifications;
+import org.springframework.data.jpa.domain.Specification;
 
 
 @Service
@@ -89,4 +92,34 @@ public class DocumentService {
         }
         return !multipartFile.getOriginalFilename().trim().equals("");
     }
+
+    public List<DocumentSearchResponseDTO> getDocumentsWithFilters(List<Long> collaborators, List<DocumentTypeEnum> types){
+        Specification<Document> spec = Specification.where(null);
+
+        if (collaborators != null && !collaborators.isEmpty()) {
+            spec = spec.and(DocumentSpecifications.withCollaboratorIdsAndTypes(collaborators, types));
+        }
+
+        if (types != null && !types.isEmpty()) {
+            spec = spec.and(DocumentSpecifications.withTypes(types));
+        }
+
+        List<Document> documents = documentRepository.findAll(spec);
+
+
+        List<DocumentSearchResponseDTO> response =
+                documents.stream().map(
+                        document -> DocumentSearchResponseDTO.builder()
+                        .id(document.getId())
+                        .type(document.getType())
+                        .name(document.getName())
+                        .createdAt(LocalDate.parse(document.getCreatedAt()))
+                        .collaborator(document.getCollaborator().getFirstName() + " " + document.getCollaborator().getLastName())
+                        .build()
+                ).toList();
+
+        return response;
+    }
+
+
 }
