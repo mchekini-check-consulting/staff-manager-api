@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CompteRenduActiviteOutDto {
-    private String collabotatorLastName;
-    private String collabotatorFirstName;
-    private int declaredDays;
-    private int billedDays;
-    private int rttRedemption;
-    private int absenceDays;
-    private double extraHoursInDays;
-    private double onCallHoursInDays;
+    private String collaboratorLastName;
+    private String collaboratorFirstName;
+    private Double declaredDays;
+    private Double billedDays;
+    private Double rttRedemption;
+    private Double absenceDays;
+    private Double extraHoursInDays;
+    private Double onCallHoursInDays;
 }
