@@ -4,13 +4,11 @@ import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.activity.in.CreateActivityInDto;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.ActivityService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/activity")
@@ -24,6 +22,13 @@ public class ActivityResource {
         this.activityService = activityService;
         this.user = user;
     }
+
+    @GetMapping
+    @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
+    public ResponseEntity<?> getCurrentMonthCRA() throws JsonProcessingException {
+        this.activityService.getCurrentMonthCRA();
+        return ResponseEntity.ok("WIP");
+    };
 
     @PostMapping
     @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
