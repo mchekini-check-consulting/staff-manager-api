@@ -9,6 +9,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,7 +33,8 @@ public class CustomerService {
   }
 
   public GetCustomersOutDto getCustomers() {
-    List<Customer> customers = this.customerRepository.findAll();
+    List<Customer> customers =
+      this.customerRepository.findAll(Sort.by(Sort.Direction.DESC, "customerId"));
 
     modelMapper
       .typeMap(Customer.class, CustomerDto.class)
