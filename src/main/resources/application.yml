@@ -9,6 +9,9 @@ oauth2:
       issuer-uri-admin: http://ci.check-consulting.net:10000/auth/realms/staff-manager-admin
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
   profiles:
     active: int
 
