@@ -1,5 +1,6 @@
 package com.example.staffmanagerapi.handler;
 
+import com.amazonaws.services.iot.model.InvalidRequestException;
 import com.example.staffmanagerapi.exception.BadRequestException;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;

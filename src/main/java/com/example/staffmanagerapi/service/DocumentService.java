@@ -106,7 +106,6 @@ public class DocumentService {
 
         List<Document> documents = documentRepository.findAll(spec);
 
-
         List<DocumentSearchResponseDTO> response =
                 documents.stream().map(
                         document -> DocumentSearchResponseDTO.builder()

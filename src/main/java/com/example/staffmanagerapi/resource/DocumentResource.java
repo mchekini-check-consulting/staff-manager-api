@@ -5,6 +5,9 @@ import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
 import com.example.staffmanagerapi.model.User;
+import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
+import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
+import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.service.DocumentService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -14,11 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.io.IOException;
-import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
-import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
-import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("api/v1/justificatif")
