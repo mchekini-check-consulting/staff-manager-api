@@ -27,5 +27,5 @@ public class DocumentSearchResponseDTO {
     private String name;
 
     @NotNull(message = "CreatedAt cannot be null")
-    private LocalDate createdAt;
+    private String createdAt;
 }

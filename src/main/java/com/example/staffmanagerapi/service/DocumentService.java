@@ -111,7 +111,7 @@ public class DocumentService {
                         .id(document.getId())
                         .type(document.getType())
                         .name(document.getName())
-                        .createdAt(LocalDate.parse(document.getCreatedAt()))
+                        .createdAt(document.getCreatedAt())
                         .collaborator(document.getCollaborator().getFirstName() + " " + document.getCollaborator().getLastName())
                         .build()
                 ).toList();

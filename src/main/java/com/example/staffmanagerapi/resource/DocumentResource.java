@@ -22,6 +22,7 @@ import java.util.List;
 import java.io.IOException;
 
 @RestController
+@RequestMapping("api/v1/justificatif")
 @Slf4j
 public class DocumentResource {
     private final DocumentService documentService;

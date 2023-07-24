@@ -16,8 +16,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,13 +32,13 @@ class DocumentIntegrationTest {
 
     private final TestRestTemplate restTemplate;
 
-
     @Autowired
     public DocumentIntegrationTest(TestRestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Test
+    @DirtiesContext
     void shouldUploadDocument() {
 
         MockMultipartFile file = new MockMultipartFile("file", "test.pdf",
@@ -77,7 +75,7 @@ class DocumentIntegrationTest {
                 .name("Document 1")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document2 = DocumentSearchResponseDTO.builder()
@@ -85,7 +83,7 @@ class DocumentIntegrationTest {
                 .name("Document 2")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document3 = DocumentSearchResponseDTO.builder()
@@ -93,7 +91,7 @@ class DocumentIntegrationTest {
                 .name("Document 3")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document4 = DocumentSearchResponseDTO.builder()
@@ -101,7 +99,7 @@ class DocumentIntegrationTest {
                 .name("Document 4")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document5 = DocumentSearchResponseDTO.builder()
@@ -109,7 +107,7 @@ class DocumentIntegrationTest {
                 .name("Document 5")
                 .collaborator("Michael Johnson")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document6 = DocumentSearchResponseDTO.builder()
@@ -117,7 +115,7 @@ class DocumentIntegrationTest {
                 .name("Document 6")
                 .collaborator("Michael Johnson")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1, document2, document3, document4, document5, document6));
@@ -155,7 +153,7 @@ class DocumentIntegrationTest {
                 .name("Document 1")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document2 = DocumentSearchResponseDTO.builder()
@@ -163,7 +161,7 @@ class DocumentIntegrationTest {
                 .name("Document 2")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1, document2));
@@ -202,7 +200,7 @@ class DocumentIntegrationTest {
                 .name("Document 1")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document2 = DocumentSearchResponseDTO.builder()
@@ -210,7 +208,7 @@ class DocumentIntegrationTest {
                 .name("Document 2")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document3 = DocumentSearchResponseDTO.builder()
@@ -218,7 +216,7 @@ class DocumentIntegrationTest {
                 .name("Document 3")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document4 = DocumentSearchResponseDTO.builder()
@@ -226,7 +224,7 @@ class DocumentIntegrationTest {
                 .name("Document 4")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1, document2, document3, document4));
@@ -265,7 +263,7 @@ class DocumentIntegrationTest {
                 .name("Document 1")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1));
@@ -305,7 +303,7 @@ class DocumentIntegrationTest {
                 .name("Document 2")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document4 = DocumentSearchResponseDTO.builder()
@@ -313,7 +311,7 @@ class DocumentIntegrationTest {
                 .name("Document 4")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document2, document4));
@@ -362,7 +360,7 @@ class DocumentIntegrationTest {
                 .name("Document 1")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document2 = DocumentSearchResponseDTO.builder()
@@ -370,7 +368,7 @@ class DocumentIntegrationTest {
                 .name("Document 2")
                 .collaborator("John Doe")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document3 = DocumentSearchResponseDTO.builder()
@@ -378,7 +376,7 @@ class DocumentIntegrationTest {
                 .name("Document 3")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document4 = DocumentSearchResponseDTO.builder()
@@ -386,7 +384,7 @@ class DocumentIntegrationTest {
                 .name("Document 4")
                 .collaborator("Jane Smith")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document5 = DocumentSearchResponseDTO.builder()
@@ -394,7 +392,7 @@ class DocumentIntegrationTest {
                 .name("Document 5")
                 .collaborator("Michael Johnson")
                 .type(DocumentTypeEnum.TRANSPORT)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         DocumentSearchResponseDTO document6 = DocumentSearchResponseDTO.builder()
@@ -402,7 +400,7 @@ class DocumentIntegrationTest {
                 .name("Document 6")
                 .collaborator("Michael Johnson")
                 .type(DocumentTypeEnum.CARTE_VITALE)
-                .createdAt(LocalDate.of(2023, 7, 23))
+                .createdAt("2023-07-23")
                 .build();
 
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(
