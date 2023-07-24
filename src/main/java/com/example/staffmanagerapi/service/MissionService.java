@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeMap;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -71,10 +70,6 @@ public class MissionService {
     }
 
     private MissionDto convertEntityToDto(Mission mission){
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
-        MissionDto missionDTO ;
-        missionDTO = modelMapper.map(mission, MissionDto.class);
-        return missionDTO;
+        return modelMapper.map(mission, MissionDto.class);
     }
 }
