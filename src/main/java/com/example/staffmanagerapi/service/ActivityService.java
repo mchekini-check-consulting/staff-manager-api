@@ -7,11 +7,12 @@ import com.example.staffmanagerapi.model.Activity;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.ActivityRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,82 +41,115 @@ public class ActivityService {
     }
 
     public static Double hoursToDays(Integer hours) {
-        return (double) (hours / HOURS_TO_DAY_RATIO);
+
+        // Create a BigDecimal object from the input value and round the BigDecimal value to three decimal places.
+        BigDecimal decimalValue =
+                new BigDecimal(hours)
+                        .divide(
+                                BigDecimal.valueOf(HOURS_TO_DAY_RATIO),
+                                3,
+                                RoundingMode.HALF_UP);
+
+        Double finalResult = decimalValue.doubleValue();
+
+        log.debug("conveting {} hours to {} days ", hours, finalResult);
+        return finalResult;
     }
 
     public List<Activity> createActivities(User user, List<ActivityDto> data) {
         Optional<Collaborator> collaborator =
                 this.collaboratorService.findCollaboratorByEmail(user.getEmail());
 
-    if (!collaborator.isPresent()) throw new EntityNotFoundException(
-      "Collaborator doesn't exist."
-    );
+        if (!collaborator.isPresent()) throw new EntityNotFoundException(
+                "Collaborator doesn't exist."
+        );
 
-    List<Activity> records = data
-      .stream()
-      .map(row ->
-        Activity
-          .builder()
-          .date(row.getDate())
-          .quantity(row.getQuantity())
-          .category(row.getCategory())
-          .comment(row.getComment())
-          .collaborator(collaborator.get())
-          .build()
-      )
-      .toList();
+        List<Activity> records = data
+                .stream()
+                .map(row ->
+                        Activity
+                                .builder()
+                                .date(row.getDate())
+                                .quantity(row.getQuantity())
+                                .category(row.getCategory())
+                                .comment(row.getComment())
+                                .collaborator(collaborator.get())
+                                .build()
+                )
+                .toList();
 
         return this.activityRepository.saveAll(records);
     }
 
-    public List<CompteRenduActiviteOutDto> getCurrentMonthCRA() throws JsonProcessingException {
+    /**
+     * <h1>Etapes a suivre:</h1>
+     * <ol>
+     *     <li>fetchAll activités de la base</li>
+     *     <li>filtrer la liste pour le mois courant</li>
+     *     <li>creer une <code>Map</code> de Collaborateur et sa liste d'activités </li>
+     *     <li>parcourir la <code>Map</code>, et pour chaque collaborateur faire le calcul selon les régles définies dans l'US-141</li>
+     *     <li>construire un DTO et le retourner comme réponse</li>
+     * </ol>
+     *
+     * @return le compte rendu d'activité qui est une <code>List of CompteRenduActiviteOutDto </code>
+     * @author Abdallah
+     * @see #hoursToDays(Integer)
+     * @see #sumDaysByCategory(List, Set)
+     * @since 7/23/2023
+     */
+    public List<CompteRenduActiviteOutDto> getCurrentMonthCRA() {
 
         // constants
         YearMonth currentMonth = YearMonth.now();
         log.info("Attempting to fetch compte-rendu-activité for current month : {} ...", currentMonth);
 
-        // traitement activitiés
-        Map<Collaborator, List<Activity>> activities = this.activityRepository.findAll()
-                .stream()
-                .filter(activity -> activity.getCollaborator() != null) // remove activities with no collaborator
-                .filter(activity -> YearMonth.from(activity.getDate()).equals(currentMonth)) // filter to current month only
-                .collect(Collectors.groupingBy(Activity::getCollaborator)); // turn List into a Map
+        try {
 
-        // une fois groupé par collaborateur dans un Map<Collaborator,List<Activity>>
-        // on map sur un DTO List<CompteRenduActiviteOutDto>
+            // traitement activitiés
+            Map<Collaborator, List<Activity>> activities = this.activityRepository.findAll()
+                    .stream()
+                    .filter(activity -> activity.getCollaborator() != null) // remove activities with no collaborator
+                    .filter(activity -> YearMonth.from(activity.getDate()).equals(currentMonth)) // filter to current month only
+                    .collect(Collectors.groupingBy(Activity::getCollaborator)); // turn List into a Map
 
-        List<CompteRenduActiviteOutDto> cra = new ArrayList<>();
+            // une fois groupé par collaborateur dans un Map<Collaborator,List<Activity>>
+            // on map sur un DTO List<CompteRenduActiviteOutDto>
 
-        activities.forEach((collaborator, activityList) -> {
+            List<CompteRenduActiviteOutDto> cra = new ArrayList<>();
 
-            log.debug("Processing Collaborator: {}", collaborator.getFirstName() + collaborator.getLastName());
-            log.debug("Number of activities: {} ", activityList.size());
+            activities.forEach((collaborator, activityList) -> {
 
-            Double declaredDays = sumDaysByCategory(activityList, DECLARED_DAYS_CATEGORIES);
-            Double billedDays = sumDaysByCategory(activityList, BILLED_DAYS_CATEGORIES);
-            Double rttRedemption = sumDaysByCategory(activityList, RTT_REDEMPTION_DAYS_CATEGORIES);
-            Double absenceDays = sumDaysByCategory(activityList, ABSENCE_DAYS_CATEGORIES);
-            Double extraHoursInDays = sumDaysByCategory(activityList, EXTRA_HOURS_IN_DAYS_CATEGORIES);
-            Double onCallHoursInDays = sumDaysByCategory(activityList, ON_CALL_HOURS_IN_DAYS_CATEGORIES);
+                log.debug("Processing Collaborator: {}", collaborator.getFirstName() + collaborator.getLastName());
+                log.debug("Number of activities: {} ", activityList.size());
 
-            CompteRenduActiviteOutDto dto = CompteRenduActiviteOutDto.builder()
-                    .collaboratorLastName(collaborator.getLastName())
-                    .collaboratorFirstName(collaborator.getFirstName())
-                    .declaredDays(declaredDays)
-                    .billedDays(billedDays)
-                    .rttRedemption(rttRedemption)
-                    .absenceDays(absenceDays)
-                    .extraHoursInDays(extraHoursInDays)
-                    .onCallHoursInDays(onCallHoursInDays)
-                    .build();
+                Double declaredDays = sumDaysByCategory(activityList, DECLARED_DAYS_CATEGORIES);
+                Double billedDays = sumDaysByCategory(activityList, BILLED_DAYS_CATEGORIES);
+                Double rttRedemption = sumDaysByCategory(activityList, RTT_REDEMPTION_DAYS_CATEGORIES);
+                Double absenceDays = sumDaysByCategory(activityList, ABSENCE_DAYS_CATEGORIES);
+                Double extraHoursInDays = sumDaysByCategory(activityList, EXTRA_HOURS_IN_DAYS_CATEGORIES);
+                Double onCallHoursInDays = sumDaysByCategory(activityList, ON_CALL_HOURS_IN_DAYS_CATEGORIES);
 
-            log.debug("Processing finished for Collaborator: {}", collaborator.getFirstName() + collaborator.getLastName());
-            log.debug("CRA item to append : {}",dto);
+                CompteRenduActiviteOutDto dto = CompteRenduActiviteOutDto.builder()
+                        .collaboratorLastName(collaborator.getLastName())
+                        .collaboratorFirstName(collaborator.getFirstName())
+                        .declaredDays(declaredDays)
+                        .billedDays(billedDays)
+                        .rttRedemption(rttRedemption)
+                        .absenceDays(absenceDays)
+                        .extraHoursInDays(extraHoursInDays)
+                        .onCallHoursInDays(onCallHoursInDays)
+                        .build();
 
-            cra.add(dto);
-        });
+                log.debug("Processing finished for Collaborator: {}", collaborator.getFirstName() + collaborator.getLastName());
+                log.debug("CRA item to append : {}", dto);
 
-        return cra;
-
+                cra.add(dto);
+            });
+            Thread.sleep(3000); // to simulate loading ( remove later )
+            return cra;
+        } catch (Exception e) {
+            log.error("An unexpected error occurred while creating compte-rendu-activité: {}", e.getMessage());
+            return Collections.emptyList(); // liste vide dans le cas d'erreur
+        }
     }
 }
