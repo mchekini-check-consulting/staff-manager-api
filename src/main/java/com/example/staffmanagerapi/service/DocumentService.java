@@ -2,6 +2,7 @@ package com.example.staffmanagerapi.service;
 
 
 import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
+import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
@@ -13,10 +14,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,9 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.utils.DocumentSpecifications;
-import org.springframework.data.jpa.domain.Specification;
 
 
 @Service
