@@ -3,6 +3,7 @@ package com.example.staffmanagerapi.handler;
 import com.example.staffmanagerapi.exception.BadRequestException;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.FileNameExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = {FileInvalidExtensionException.class, FileEmptyException.class})
+    @ExceptionHandler(value = {FileInvalidExtensionException.class, FileEmptyException.class, FileNameExistsException.class})
     public ResponseEntity<Object> handleBadRequestException(
            RuntimeException ex
     ) {;
