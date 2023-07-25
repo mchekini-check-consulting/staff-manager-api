@@ -53,12 +53,12 @@ class DocumentIntegrationTest {
                 .file(file)
                 .build();
 
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        HttpEntity<CreateDocumentDto> requestEntity = new HttpEntity<>(dto, headers);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpEntity<CreateDocumentDto> requestEntity = new HttpEntity<>(dto, headers);
 
-        // WHEN
-//        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/document", requestEntity, Object.class);
+//         WHEN
+//        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/justificatif", requestEntity, Object.class);
 
         // THEN
 //        assertEquals(201, response.getStatusCode().value());
