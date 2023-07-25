@@ -36,7 +36,7 @@ public class DocumentResource {
 
     @PostMapping()
     @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
-    public ResponseEntity<?> upload(@RequestBody @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
+    public ResponseEntity<?> upload(@ModelAttribute @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
         this.documentService.uploadFile(dto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

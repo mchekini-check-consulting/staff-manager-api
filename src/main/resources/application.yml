@@ -13,7 +13,7 @@ spring:
     multipart:
       max-file-size: 10MB
   profiles:
-    active: local
+    active: int
 
 
 

@@ -1,0 +1,2 @@
+ALTER TABLE document
+ALTER COLUMN created_at TYPE VARCHAR(30);

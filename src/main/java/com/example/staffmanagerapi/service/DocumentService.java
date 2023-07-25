@@ -11,23 +11,21 @@ import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Document;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.DocumentRepository;
+import com.example.staffmanagerapi.utils.DocumentSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import com.example.staffmanagerapi.utils.DocumentSpecifications;
 
 import static com.example.staffmanagerapi.utils.Constants.AUTHORIZED_FILE_EXTENSION;
 import static com.example.staffmanagerapi.utils.Constants.BUCKET_NAME_JUSTIFICATIF;
@@ -47,7 +45,7 @@ public class DocumentService {
         this.collaboratorService = collaboratorService;
     }
 
-    public Integer uploadFile(CreateDocumentDto dto, User user) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, IOException {
+    public Integer uploadFile(CreateDocumentDto dto, User user) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
         Collaborator collaborator = this.collaboratorService.findCollaboratorByEmail(user.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("Ce collaborateur n'existe pas"));
 
@@ -59,7 +57,7 @@ public class DocumentService {
         String name = fileContent.getOriginalFilename();
 
         boolean docExists = documentRepository.existsByName(name);
-
+//
         if (docExists) {
             throw new FileNameExistsException("Ce nom de document est déjà existant. Merci de modifier le nom");
         }
@@ -72,7 +70,6 @@ public class DocumentService {
         DocumentTypeEnum type = dto.getType();
         String createdAt = LocalDateTime.now().format(formatter);
         boolean isValidFile = isValidFile(fileContent);
-
 
         if (!isValidFile || !AUTHORIZED_FILE_EXTENSION.contains(extension)) {
             throw new FileInvalidExtensionException("Type fichier ." + extension + " non autorisé, type de fichiers autorisés: .jpeg, .jpg, .pdf");
@@ -122,6 +119,5 @@ public class DocumentService {
 
         return response;
     }
-
 
 }
