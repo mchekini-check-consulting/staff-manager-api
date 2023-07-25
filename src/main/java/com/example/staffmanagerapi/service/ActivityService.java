@@ -145,7 +145,6 @@ public class ActivityService {
 
                 cra.add(dto);
             });
-            Thread.sleep(3000); // to simulate loading ( remove later )
             return cra;
         } catch (Exception e) {
             log.error("An unexpected error occurred while creating compte-rendu-activité: {}", e.getMessage());

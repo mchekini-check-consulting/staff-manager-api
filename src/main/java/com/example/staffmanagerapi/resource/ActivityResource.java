@@ -5,7 +5,6 @@ import com.example.staffmanagerapi.dto.activity.in.CreateActivityInDto;
 import com.example.staffmanagerapi.dto.activity.out.CompteRenduActiviteOutDto;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.ActivityService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class ActivityResource {
 
     @GetMapping
     @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
-    public ResponseEntity<List<CompteRenduActiviteOutDto>> getCurrentMonthCRA() throws JsonProcessingException {
+    public ResponseEntity<List<CompteRenduActiviteOutDto>> getCurrentMonthCRA() {
         return ResponseEntity.ok(this.activityService.getCurrentMonthCRA());
     }
 
