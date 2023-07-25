@@ -1,7 +1,9 @@
 package com.example.staffmanagerapi.service;
 
+import com.example.staffmanagerapi.dto.customer.CustomerDto;
 import com.example.staffmanagerapi.dto.mission.in.CreateMissionInDto;
 import com.example.staffmanagerapi.dto.mission.in.MissionDto;
+import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.CustomerRepository;
@@ -70,6 +72,13 @@ public class MissionService {
     }
 
     private MissionDto convertEntityToDto(Mission mission){
+        modelMapper.
+                typeMap(Mission.class, MissionDto.class).
+                addMapping(Mission::getNameMission , MissionDto::setMissionName)
+                .addMappings(mapper-> mapper.map(src->src.getCustomer().getCustomerName(),MissionDto::setCustomerName))
+                .addMappings(mapper-> mapper.map(src->src.getCollaborator().getFirstName(),MissionDto::setFirstName))
+                .addMappings(mapper-> mapper.map(src->src.getCollaborator().getLastName(),MissionDto::setLastName));
+
         return modelMapper.map(mission, MissionDto.class);
     }
 }
