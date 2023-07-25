@@ -10,6 +10,7 @@ import com.example.staffmanagerapi.model.Document;
 import com.example.staffmanagerapi.repository.DocumentRepository;
 import com.example.staffmanagerapi.service.CollaboratorService;
 import com.example.staffmanagerapi.service.DocumentService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -33,12 +34,22 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DocumentUnitTest {
 
-
+    private static DateTimeFormatter formatter;
     @Mock
     private CollaboratorService collaboratorService;
 
     @Mock
     private DocumentRepository documentRepository;
+
+    @InjectMocks
+    private DocumentService documentService;
+
+    @BeforeAll
+    public static void setupDateTimeFormatter() {
+        formatter = DateTimeFormatter
+                .ofPattern("dd/MM/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+    }
 
 
     @Test
@@ -141,9 +152,6 @@ class DocumentUnitTest {
         });
         assertTrue(exception.getMessage().contains("Veuillez séléctionner un fichier valide"));
     }
-    @InjectMocks
-    private DocumentService documentService;
-
 
     @Test
     public void shouldGetDocumentsWithFilters() {
@@ -168,7 +176,7 @@ class DocumentUnitTest {
                 .name("Document 1")
                 .type(DocumentTypeEnum.TRANSPORT)
                 .collaborator(collaborator)
-                .createdAt(String.valueOf(LocalDate.now()))
+                .createdAt(LocalDate.now().format(formatter))
                 .build();
 
         mockDocuments.add(document1);
@@ -205,7 +213,7 @@ class DocumentUnitTest {
                 .name("Document 1")
                 .type(DocumentTypeEnum.TRANSPORT)
                 .collaborator(collaborator1)
-                .createdAt(String.valueOf(LocalDate.now()))
+                .createdAt(LocalDate.now().format(formatter))
                 .build();
 
         Collaborator collaborator2 = Collaborator.builder()
@@ -222,7 +230,7 @@ class DocumentUnitTest {
                 .name("Document 2")
                 .type(DocumentTypeEnum.CARTE_VITALE)
                 .collaborator(collaborator2)
-                .createdAt(String.valueOf(LocalDate.now()))
+                .createdAt(LocalDate.now().format(formatter))
                 .build();
 
         mockDocuments.add(document1);
@@ -257,7 +265,7 @@ class DocumentUnitTest {
                 .name("Document 1")
                 .type(DocumentTypeEnum.TRANSPORT)
                 .collaborator(collaborator1)
-                .createdAt(String.valueOf(LocalDate.now()))
+                .createdAt(LocalDate.now().format(formatter))
                 .build();
 
         Collaborator collaborator2 = Collaborator.builder()
@@ -274,7 +282,7 @@ class DocumentUnitTest {
                 .name("Document 2")
                 .type(DocumentTypeEnum.CARTE_VITALE)
                 .collaborator(collaborator2)
-                .createdAt(String.valueOf(LocalDate.now()))
+                .createdAt(LocalDate.now().format(formatter))
                 .build();
 
         mockDocuments.add(document1);

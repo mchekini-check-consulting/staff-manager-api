@@ -42,7 +42,7 @@ public class DocumentResource {
 
     @PostMapping("search")
     @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
-    public ResponseEntity search(@Valid @RequestBody DocumentSearchRequestDTO searchRequest){
+    public ResponseEntity<List> search(@Valid @RequestBody DocumentSearchRequestDTO searchRequest){
         List<Long> collaboratorIds = searchRequest.getCollaborators();
         List<DocumentTypeEnum> types = searchRequest.getTypes();
         List<DocumentSearchResponseDTO> documents = documentService.getDocumentsWithFilters(collaboratorIds, types);
