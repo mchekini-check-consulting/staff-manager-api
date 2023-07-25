@@ -32,7 +32,7 @@ public class AuthenticatedAspect {
     }
 
     @Around("execution(* *(..)) && @annotation(Authenticated)")
-    public void before(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object before(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
 
@@ -40,10 +40,18 @@ public class AuthenticatedAspect {
                 .collect(Collectors.toSet());
         boolean isAuthenticated = signature.getMethod().getAnnotation(Authenticated.class).authenticated();
 
-        if (isAuthenticated && !user.isAuthenticated()) response.sendError(401);
-        else if (!roles.isEmpty() && user.getRoles() != null && user.getRoles().stream().noneMatch(roles::contains))
+        if (isAuthenticated && !user.isAuthenticated()) {
+            response.sendError(401);
+            // return null c'est un car d'erreur
+            return null;
+        } else if (!roles.isEmpty() && user.getRoles() != null && user.getRoles().stream().noneMatch(roles::contains)) {
             response.sendError(403);
-        else proceedingJoinPoint.proceed();
-
+            // la meme chose ici
+            return null;
+        } else {
+            // Continue avec la méthode interceptée et retourne son résultat
+            return proceedingJoinPoint.proceed();
+        }
     }
+
 }
