@@ -70,6 +70,7 @@ public class AccessTokenProvider {
             return jsonResponse.get("access_token").getAsString();
 
         } catch (URISyntaxException | IOException | InterruptedException e) {
+            log.error("failed to fetch access_token, could be that keycloak client got deleted, or internet issues, or keycloak is down.");
             throw new RuntimeException(e);
         }
     }
@@ -102,6 +103,7 @@ public class AccessTokenProvider {
             return jsonResponse.get("access_token").getAsString();
 
         } catch (URISyntaxException | IOException | InterruptedException e) {
+            log.error("failed to fetch access_token, could be that keycloak client got deleted, or internet issues, or keycloak is down.");
             throw new RuntimeException(e);
         }
     }
