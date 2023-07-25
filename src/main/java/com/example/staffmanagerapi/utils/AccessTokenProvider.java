@@ -1,7 +1,7 @@
 package com.example.staffmanagerapi.utils;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.nimbusds.jose.shaded.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
