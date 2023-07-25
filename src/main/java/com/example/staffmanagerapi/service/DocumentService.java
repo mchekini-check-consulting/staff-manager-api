@@ -2,6 +2,7 @@ package com.example.staffmanagerapi.service;
 
 
 import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
+import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
@@ -14,19 +15,24 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
-
 import static com.example.staffmanagerapi.utils.Constants.AUTHORIZED_FILE_EXTENSION;
 import static com.example.staffmanagerapi.utils.Constants.BUCKET_NAME_JUSTIFICATIF;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import com.example.staffmanagerapi.utils.DocumentSpecifications;
+
 
 
 @Service
@@ -91,4 +97,33 @@ public class DocumentService {
         if (Objects.isNull(multipartFile.getOriginalFilename())) return false;
         return !multipartFile.getOriginalFilename().trim().equals("");
     }
+
+    public List<DocumentSearchResponseDTO> getDocumentsWithFilters(List<Long> collaborators, List<DocumentTypeEnum> types){
+        Specification<Document> spec = Specification.where(null);
+
+        if (collaborators != null && !collaborators.isEmpty()) {
+            spec = spec.and(DocumentSpecifications.withCollaboratorIdsAndTypes(collaborators, types));
+        }
+
+        if (types != null && !types.isEmpty()) {
+            spec = spec.and(DocumentSpecifications.withTypes(types));
+        }
+
+        List<Document> documents = documentRepository.findAll(spec);
+
+        List<DocumentSearchResponseDTO> response =
+                documents.stream().map(
+                        document -> DocumentSearchResponseDTO.builder()
+                        .id(document.getId())
+                        .type(document.getType())
+                        .name(document.getName())
+                        .createdAt(document.getCreatedAt())
+                        .collaborator(document.getCollaborator().getFirstName() + " " + document.getCollaborator().getLastName())
+                        .build()
+                ).toList();
+
+        return response;
+    }
+
+
 }
