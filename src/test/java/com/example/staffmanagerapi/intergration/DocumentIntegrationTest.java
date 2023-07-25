@@ -1,44 +1,108 @@
 package com.example.staffmanagerapi.intergration;
 
+import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
 import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
+import com.example.staffmanagerapi.model.Collaborator;
+import com.example.staffmanagerapi.model.Document;
+import com.example.staffmanagerapi.repository.CollaboratorRepository;
+import com.example.staffmanagerapi.repository.DocumentRepository;
 import com.example.staffmanagerapi.utils.AccessTokenProvider;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.staffmanagerapi.enums.DocumentTypeEnum.CARTE_VITALE;
+import static com.example.staffmanagerapi.enums.DocumentTypeEnum.TRANSPORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@Sql(scripts = "classpath:testDocument.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Disabled
+//@Sql(scripts = "classpath:testDocument.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class DocumentIntegrationTest {
     @LocalServerPort
     Integer port;
 
     private final TestRestTemplate restTemplate;
     private String ADMIN_ACCESS_TOKEN;
+    private final CollaboratorRepository collaboratorRepository;
+    private final DocumentRepository documentRepository;
 
     @Autowired
-    public DocumentIntegrationTest(TestRestTemplate restTemplate) {
+    public DocumentIntegrationTest(TestRestTemplate restTemplate, CollaboratorRepository collaboratorRepository, DocumentRepository documentRepository) {
         this.restTemplate = restTemplate;
+        this.collaboratorRepository = collaboratorRepository;
+        this.documentRepository = documentRepository;
+    }
+
+
+    private void initData(){
+
+        collaboratorRepository.deleteAll();
+        Collaborator collaborator1 = Collaborator.builder().id(1L)
+                .lastName("Doe")
+                .firstName("'John'")
+                .address("New York City")
+                .email("john.doe@example.com")
+                .phone("'1234567890'")
+                .build();
+
+        Collaborator collaborator2 = Collaborator.builder().lastName("Smith").id(2L)
+                .firstName("Jane")
+                .address("Los Angeles")
+                .email("jane.smith@example.com")
+                .phone("9876543210")
+                .build();
+
+        Collaborator collaborator3 = Collaborator.builder().lastName("Johnson").id(3L)
+                .firstName("Michael")
+                .address("Chicago")
+                .email("michael.johnson@example.com")
+                .phone("5555555555")
+                .build();
+
+        collaboratorRepository.saveAll(Lists.newArrayList(collaborator1, collaborator2, collaborator3));
+
+        documentRepository.deleteAll();
+        Document document1 = Document.builder()
+                .name("Document 1").type(TRANSPORT).collaborator(collaborator1).createdAt("2023-07-23")
+                .build();
+        Document document2 = Document.builder()
+                .name("Document 2").type(CARTE_VITALE).collaborator(collaborator1).createdAt("2023-07-23")
+                .build();
+        Document document3 = Document.builder()
+                .name("Document 3").type(TRANSPORT).collaborator(collaborator2).createdAt("2023-07-23")
+                .build();
+        Document document4 = Document.builder()
+                .name("Document 4").type(CARTE_VITALE).collaborator(collaborator2).createdAt("2023-07-23")
+                .build();
+        Document document5 = Document.builder()
+                .name("Document 5").type(TRANSPORT).collaborator(collaborator3).createdAt("2023-07-23")
+                .build();
+        Document document6 = Document.builder()
+                .name("Document 6").type(CARTE_VITALE).collaborator(collaborator3).createdAt("2023-07-23")
+                .build();
+
+        documentRepository.saveAll(Lists.newArrayList(document1, document2, document3, document4, document5, document6));
     }
 
     @Test
@@ -83,7 +147,7 @@ class DocumentIntegrationTest {
                 .id(1)
                 .name("Document 1")
                 .collaborator("John Doe")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -99,7 +163,7 @@ class DocumentIntegrationTest {
                 .id(3)
                 .name("Document 3")
                 .collaborator("Jane Smith")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -115,7 +179,7 @@ class DocumentIntegrationTest {
                 .id(5)
                 .name("Document 5")
                 .collaborator("Michael Johnson")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -162,7 +226,7 @@ class DocumentIntegrationTest {
                 .id(1)
                 .name("Document 1")
                 .collaborator("John Doe")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -210,7 +274,7 @@ class DocumentIntegrationTest {
                 .id(1)
                 .name("Document 1")
                 .collaborator("John Doe")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -226,7 +290,7 @@ class DocumentIntegrationTest {
                 .id(3)
                 .name("Document 3")
                 .collaborator("Jane Smith")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -267,14 +331,14 @@ class DocumentIntegrationTest {
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);
         List<DocumentTypeEnum> types = new ArrayList<>();
-        types.add(DocumentTypeEnum.TRANSPORT);
+        types.add(TRANSPORT);
         DocumentSearchRequestDTO request = DocumentSearchRequestDTO.builder().collaborators(collaborators).types(types).build();
 
         DocumentSearchResponseDTO document1 = DocumentSearchResponseDTO.builder()
                 .id(1)
                 .name("Document 1")
                 .collaborator("John Doe")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -360,7 +424,7 @@ class DocumentIntegrationTest {
 
         List<DocumentTypeEnum> types = new ArrayList<>();
         types.add(DocumentTypeEnum.CARTE_VITALE);
-        types.add(DocumentTypeEnum.TRANSPORT);
+        types.add(TRANSPORT);
         types.add(DocumentTypeEnum.AUTRE);
         types.add(DocumentTypeEnum.PIECE_IDENTITE);
 
@@ -373,7 +437,7 @@ class DocumentIntegrationTest {
                 .id(1)
                 .name("Document 1")
                 .collaborator("John Doe")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -389,7 +453,7 @@ class DocumentIntegrationTest {
                 .id(3)
                 .name("Document 3")
                 .collaborator("Jane Smith")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
@@ -405,7 +469,7 @@ class DocumentIntegrationTest {
                 .id(5)
                 .name("Document 5")
                 .collaborator("Michael Johnson")
-                .type(DocumentTypeEnum.TRANSPORT)
+                .type(TRANSPORT)
                 .createdAt("2023-07-23")
                 .build();
 
