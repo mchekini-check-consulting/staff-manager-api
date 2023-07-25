@@ -5,6 +5,7 @@ import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.FileNameExistsException;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Document;
 import com.example.staffmanagerapi.model.User;
@@ -18,7 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
@@ -41,42 +42,48 @@ public class DocumentService {
         this.collaboratorService = collaboratorService;
     }
 
-    public Integer uploadFile(CreateDocumentDto dto, User user) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, IOException {
+    public Integer uploadFile(CreateDocumentDto dto, User user) throws FileEmptyException, EntityNotFoundException, FileNameExistsException, FileInvalidExtensionException, IOException {
         Collaborator collaborator = this.collaboratorService.findCollaboratorByEmail(user.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Collaborator doesn't exist."));;
+                .orElseThrow(() -> new EntityNotFoundException("Ce collaborateur n'existes pas"));;
 
         if (dto.getFile().isEmpty()) {
             throw new FileEmptyException("Veuillez séléctionner un fichier valide non vide");
         }
 
+        MultipartFile fileContent = dto.getFile();
+
+        String fileName = fileContent.getOriginalFilename();
+        boolean docExists = documentRepository.findByName(fileName);
+
+        if (docExists) {
+            throw new FileNameExistsException("Ce nom de document est déjà existant. Merci de modifier le nom");
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("dd/MM/uuuu")
+                .ofPattern("dd/MM/yyyy HH:mm:ss")
                 .withResolverStyle(ResolverStyle.STRICT);
 
-        String extension = StringUtils.getFilenameExtension(dto.getFile().getOriginalFilename());
+        String extension = StringUtils.getFilenameExtension(fileContent.getOriginalFilename());
         DocumentTypeEnum type = dto.getType();
-        String name = dto.getFile().getOriginalFilename();
-        MultipartFile content = dto.getFile();
+
         String bucketName = "justificatifs-check-consulting";
-        String createdAt = LocalDate.now().format(formatter);
+        String createdAt = LocalDateTime.now().format(formatter);
 
-        String filename = name.substring(0, name.lastIndexOf("."));
-
-        boolean isValidFile = isValidFile(dto.getFile());
+        boolean isValidFile = isValidFile(fileContent);
         List<String> allowedFileExtensions = new ArrayList<>(Arrays.asList("pdf", "jpg", "jpeg"));
 
 
-        if (!isValidFile || !allowedFileExtensions.contains(FilenameUtils.getExtension(name))) {
+        if (!isValidFile || !allowedFileExtensions.contains(FilenameUtils.getExtension(fileName))) {
             throw new FileInvalidExtensionException("Type fichier ." + extension + " non autorisé, type de fichiers autorisés: .jpeg, .jpg, .pdf");
         }
 
        // Uploading file to s3s
-        amazonS3Service.upload(content, bucketName, filename.concat(collaborator.getId().toString().concat('.'+extension)));
+        amazonS3Service.upload(fileContent, bucketName, fileName);
 
         // Saving metadata to db
         Document doc = new Document();
         doc.setCollaborator(collaborator);
-        doc.setName(filename.concat(collaborator.getId().toString().concat('.'+extension)));
+        doc.setName(fileName);
         doc.setType(type);
         doc.setCreatedAt(createdAt);
         return documentRepository.save(doc).getId();
