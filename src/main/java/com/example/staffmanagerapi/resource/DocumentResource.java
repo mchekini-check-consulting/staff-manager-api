@@ -7,16 +7,12 @@ import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
 import com.example.staffmanagerapi.exception.FileNameExistsException;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.DocumentService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -34,7 +30,7 @@ public class DocumentResource {
 
     @PostMapping()
     @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
-    public ResponseEntity<?> upload(@RequestBody @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
+    public ResponseEntity<?> upload(@ModelAttribute @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
         this.documentService.uploadFile(dto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

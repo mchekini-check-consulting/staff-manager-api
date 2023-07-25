@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Integer> {
-    boolean findByName(String name);
+    boolean existsByName(String name);
 }

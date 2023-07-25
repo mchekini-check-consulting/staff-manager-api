@@ -19,13 +19,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import static com.example.staffmanagerapi.utils.Constants.AUTHORIZED_FILE_EXTENSION;
+import static com.example.staffmanagerapi.utils.Constants.BUCKET_NAME_JUSTIFICATIF;
 
 
 @Service
@@ -42,18 +43,18 @@ public class DocumentService {
         this.collaboratorService = collaboratorService;
     }
 
-    public Integer uploadFile(CreateDocumentDto dto, User user) throws FileEmptyException, EntityNotFoundException, FileNameExistsException, FileInvalidExtensionException, IOException {
+    public Integer uploadFile(CreateDocumentDto dto, User user) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, IOException {
         Collaborator collaborator = this.collaboratorService.findCollaboratorByEmail(user.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Ce collaborateur n'existes pas"));;
+                .orElseThrow(() -> new EntityNotFoundException("Ce collaborateur n'existe pas"));
 
         if (dto.getFile().isEmpty()) {
             throw new FileEmptyException("Veuillez séléctionner un fichier valide non vide");
         }
 
         MultipartFile fileContent = dto.getFile();
+        String name = fileContent.getOriginalFilename();
 
-        String fileName = fileContent.getOriginalFilename();
-        boolean docExists = documentRepository.findByName(fileName);
+        boolean docExists = documentRepository.existsByName(name);
 
         if (docExists) {
             throw new FileNameExistsException("Ce nom de document est déjà existant. Merci de modifier le nom");
@@ -63,27 +64,23 @@ public class DocumentService {
                 .ofPattern("dd/MM/yyyy HH:mm:ss")
                 .withResolverStyle(ResolverStyle.STRICT);
 
-        String extension = StringUtils.getFilenameExtension(fileContent.getOriginalFilename());
+        String extension = StringUtils.getFilenameExtension(name);
         DocumentTypeEnum type = dto.getType();
-
-        String bucketName = "justificatifs-check-consulting";
         String createdAt = LocalDateTime.now().format(formatter);
-
         boolean isValidFile = isValidFile(fileContent);
-        List<String> allowedFileExtensions = new ArrayList<>(Arrays.asList("pdf", "jpg", "jpeg"));
 
 
-        if (!isValidFile || !allowedFileExtensions.contains(FilenameUtils.getExtension(fileName))) {
+        if (!isValidFile || !AUTHORIZED_FILE_EXTENSION.contains(extension)) {
             throw new FileInvalidExtensionException("Type fichier ." + extension + " non autorisé, type de fichiers autorisés: .jpeg, .jpg, .pdf");
         }
 
-       // Uploading file to s3s
-        amazonS3Service.upload(fileContent, bucketName, fileName);
+        // Uploading file to s3s
+        amazonS3Service.upload(fileContent, BUCKET_NAME_JUSTIFICATIF, name);
 
         // Saving metadata to db
         Document doc = new Document();
         doc.setCollaborator(collaborator);
-        doc.setName(fileName);
+        doc.setName(name);
         doc.setType(type);
         doc.setCreatedAt(createdAt);
         return documentRepository.save(doc).getId();
@@ -91,9 +88,7 @@ public class DocumentService {
 
 
     private boolean isValidFile(MultipartFile multipartFile){
-        if (Objects.isNull(multipartFile.getOriginalFilename())){
-            return false;
-        }
+        if (Objects.isNull(multipartFile.getOriginalFilename())) return false;
         return !multipartFile.getOriginalFilename().trim().equals("");
     }
 }
