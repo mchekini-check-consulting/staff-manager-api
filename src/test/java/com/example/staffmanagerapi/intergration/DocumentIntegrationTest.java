@@ -3,6 +3,8 @@ package com.example.staffmanagerapi.intergration;
 import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
 import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
+import com.example.staffmanagerapi.utils.AccessTokenProvider;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
@@ -31,6 +34,7 @@ class DocumentIntegrationTest {
     Integer port;
 
     private final TestRestTemplate restTemplate;
+    private String ADMIN_ACCESS_TOKEN;
 
     @Autowired
     public DocumentIntegrationTest(TestRestTemplate restTemplate) {
@@ -58,6 +62,11 @@ class DocumentIntegrationTest {
 
         // THEN
 //        assertEquals(201, response.getStatusCode().value());
+    }
+
+    @BeforeEach
+    public void setUp() {
+        this.ADMIN_ACCESS_TOKEN = AccessTokenProvider.getAdminAccessToken("test-integration", "test-integration");
     }
 
     // Test case 0-0
@@ -121,6 +130,7 @@ class DocumentIntegrationTest {
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1, document2, document3, document4, document5, document6));
 
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(ADMIN_ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DocumentSearchRequestDTO> requestEntity = new HttpEntity<>(request, headers);
 
@@ -167,6 +177,7 @@ class DocumentIntegrationTest {
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1, document2));
 
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(ADMIN_ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DocumentSearchRequestDTO> requestEntity = new HttpEntity<>(request, headers);
 
@@ -230,6 +241,7 @@ class DocumentIntegrationTest {
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1, document2, document3, document4));
 
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(ADMIN_ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DocumentSearchRequestDTO> requestEntity = new HttpEntity<>(request, headers);
 
@@ -269,6 +281,7 @@ class DocumentIntegrationTest {
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document1));
 
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(ADMIN_ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DocumentSearchRequestDTO> requestEntity = new HttpEntity<>(request, headers);
 
@@ -317,6 +330,7 @@ class DocumentIntegrationTest {
         List<DocumentSearchResponseDTO> responseEntity = new ArrayList<>(Arrays.asList(document2, document4));
 
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(ADMIN_ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DocumentSearchRequestDTO> requestEntity = new HttpEntity<>(request, headers);
 
@@ -408,6 +422,7 @@ class DocumentIntegrationTest {
         );
 
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(ADMIN_ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DocumentSearchRequestDTO> requestEntity = new HttpEntity<>(request, headers);
 

@@ -6,7 +6,7 @@ node("ci-node") {
 
     stage("Quality Analyses"){
 
-        sh "chmod 700 mvnw && ./mvnw clean verify sonar:sonar \\\n" +
+        sh "chmod 700 mvnw && ./mvnw clean verify -Dspring.profiles.active=test sonar:sonar \\\n" +
                 "  -Dsonar.projectKey=staff-manager-api \\\n" +
                 "  -Dsonar.projectName='staff-manager-api' \\\n" +
                 "  -Dsonar.host.url=http://ci.check-consulting.net:11001 \\\n" +
