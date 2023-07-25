@@ -1,6 +1,7 @@
 package com.example.staffmanagerapi.service;
 
 import com.example.staffmanagerapi.dto.mission.in.CreateMissionInDto;
+import com.example.staffmanagerapi.dto.mission.in.MissionDto;
 import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.CustomerRepository;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -57,5 +60,16 @@ public class MissionService {
 
         return missionRepository.save(mission).getId();
 
+    }
+
+    public List<MissionDto> missions(){
+        return missionRepository.findAll()
+                .stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+    private MissionDto convertEntityToDto(Mission mission){
+        return modelMapper.map(mission, MissionDto.class);
     }
 }

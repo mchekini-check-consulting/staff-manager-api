@@ -9,5 +9,16 @@ oauth2:
       issuer-uri-admin: http://ci.check-consulting.net:10000/auth/realms/staff-manager-admin
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
   profiles:
     active: int
+
+
+
+# AWS
+aws:
+  access-key-id: AKIAS7WDEOQ4EJUQXRA4
+  secret-access.key: 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
+  region: us-east-1

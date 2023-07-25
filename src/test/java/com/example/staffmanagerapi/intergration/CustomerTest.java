@@ -33,6 +33,11 @@ class CustomerTest {
         this.restTemplate = restTemplate;
     }
 
+    @Test
+    void ItShouldGetCustomers() {
+        ResponseEntity<Object> response = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/customer", Object.class);
+        assertEquals(200, response.getStatusCode().value());
+    }
 
     @Test
     void ItShouldAddNewCustomerWithSuccess() {
