@@ -165,8 +165,6 @@ class DocumentUnitTest {
                 .phone("000000000")
                 .build();
 
-
-
         MockMultipartFile file = new MockMultipartFile("file", "test.pdf",
                 "pdf", "".getBytes());
 

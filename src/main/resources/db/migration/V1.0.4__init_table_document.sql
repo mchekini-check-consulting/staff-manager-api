@@ -3,7 +3,7 @@ CREATE TABLE IF NOT exists document (
     name VARCHAR(255),
     type VARCHAR(50),
     collaborator_id BIGSERIAL,
-    created_at VARCHAR(20),
+    created_at VARCHAR(30),
     CONSTRAINT fk_collaborator_document
             FOREIGN KEY(collaborator_id)
             REFERENCES collaborator(id)
