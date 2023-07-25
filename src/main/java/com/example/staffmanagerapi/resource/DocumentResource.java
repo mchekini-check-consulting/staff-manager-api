@@ -4,11 +4,13 @@ import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.FileNameExistsException;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
 import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.service.DocumentService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +37,7 @@ public class DocumentResource {
 
     @PostMapping()
     @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
-    public ResponseEntity<?> upload(@ModelAttribute @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, IOException {
+    public ResponseEntity<?> upload(@RequestBody @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
         this.documentService.uploadFile(dto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
