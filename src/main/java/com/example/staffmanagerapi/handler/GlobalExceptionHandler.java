@@ -55,11 +55,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = {FileInvalidExtensionException.class, FileEmptyException.class, FileNameExistsException.class})
+    @ExceptionHandler(value = {FileEmptyException.class})
     public ResponseEntity<Object> handleBadRequestException(
            RuntimeException ex
     ) {;
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {FileInvalidExtensionException.class})
+    public ResponseEntity<Object> handleUnsupportedMediaTypeException(
+            RuntimeException ex
+    ) {;
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = { FileNameExistsException.class})
+    public ResponseEntity<Object> handleConflictException(
+            RuntimeException ex
+    ) {;
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
 }

@@ -4,6 +4,7 @@ import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.FileNameExistsException;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Document;
 import com.example.staffmanagerapi.repository.DocumentRepository;
@@ -99,7 +100,6 @@ class DocumentUnitTest {
         assertTrue(exception.getMessage().contains("Type fichier .txt non autorisé, type de fichiers autorisés: .jpeg, .jpg, .pdf"));
     }
 
-
     @Test
     public void itShouldUploadDocumentEmpty() {
         // GIVEN
@@ -133,5 +133,40 @@ class DocumentUnitTest {
             documentRepository.save(doc);
         });
         assertTrue(exception.getMessage().contains("Veuillez séléctionner un fichier valide"));
+    }
+
+    @Test
+    public void itShouldUploadDocumentUniqueName() {
+        // GIVEN
+        Collaborator collaborator = Collaborator.builder()
+                .email("test@gmail.com")
+                .address("adresse test")
+                .lastName("last name")
+                .firstName("first name")
+                .phone("000000000")
+                .build();
+
+
+
+        MockMultipartFile file = new MockMultipartFile("file", "test.pdf",
+                "pdf", "".getBytes());
+
+
+        CreateDocumentDto dto = CreateDocumentDto.builder().type(DocumentTypeEnum.PIECE_IDENTITE).file(file).build();
+
+        Mockito
+                .lenient()
+                .when(collaboratorService.findCollaboratorByEmail(collaborator.getEmail()))
+                .thenReturn(
+                        Optional.of(Collaborator.builder().email(collaborator.getEmail()).build())
+                );
+
+        Document doc = new ModelMapper().map(dto, Document.class);
+
+        Mockito.lenient().when(documentRepository.save(doc)).thenThrow(new FileNameExistsException("Ce nom de document est déjà existant. Merci de modifier le nom"));
+        Exception exception = assertThrows(FileNameExistsException.class, () -> {
+            documentRepository.save(doc);
+        });
+        assertTrue(exception.getMessage().contains("Ce nom de document est déjà existant. Merci de modifier le nom"));
     }
 }
