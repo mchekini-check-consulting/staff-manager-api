@@ -49,4 +49,5 @@ public class Constants {
     );
 
     public static String BUCKET_NAME_JUSTIFICATIF = "justificatifs-check-consulting";
+
 }
