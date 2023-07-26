@@ -4,6 +4,7 @@ import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.FileNameExistsException;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
 import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
@@ -35,7 +36,7 @@ public class DocumentResource {
 
     @PostMapping()
     @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
-    public ResponseEntity<?> upload(@ModelAttribute @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, IOException {
+    public ResponseEntity<?> upload(@ModelAttribute @Valid CreateDocumentDto dto) throws FileEmptyException, EntityNotFoundException, FileInvalidExtensionException, FileNameExistsException, IOException {
         this.documentService.uploadFile(dto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
