@@ -8,6 +8,8 @@ import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Document;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.DocumentRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import com.example.staffmanagerapi.utils.AccessTokenProvider;
 import com.google.common.collect.Lists;
 import org.flywaydb.core.Flyway;
@@ -18,8 +20,18 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -502,4 +514,53 @@ class DocumentIntegrationTest {
 
 
 
+
+    //May not work if the document "diplome master 2 université de versailles.pdf" is deleted from S3 bucket
+    @Test
+    void itShouldDownloadDocument(){
+        Collaborator collaboratorInput = Collaborator.builder()
+                .email("collab1@gmail.com")
+                .address("adresse test")
+                .lastName("last name")
+                .firstName("first name")
+                .phone("0666666666")
+                .build();
+
+        Collaborator collaborator = collaboratorRepository.save(collaboratorInput);
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("dd/MM/uuuu HH:mm:ss")
+                .withResolverStyle(ResolverStyle.STRICT);
+        Document document = Document
+                .builder()
+                .name("diplome master 2 université de versailles.pdf")
+                .type(DocumentTypeEnum.TRANSPORT)
+                .createdAt(LocalDateTime.now().format(formatter))
+                .collaborator(collaborator)
+                .build();
+        documentRepository.save(document);
+
+        ResponseEntity<byte[]> response = new RestTemplate().exchange(
+                "http://localhost:"+port+"/api/v1/justificatif/"+document.getName(),
+                HttpMethod.GET,
+        null,
+                byte[].class
+        );
+        HttpHeaders headers = response.getHeaders();
+        assertEquals(HttpStatusCode.valueOf(200),response.getStatusCode());
+        Assertions
+                .assertThat(headers.getContentLength())
+                .isGreaterThan(0);
+    }
+
+    @Test
+    void itShouldNotDownloadNotExistingDocument(){
+        //THERE IS NO DOCUMENTS IN DATABASE
+        ResponseEntity<byte[]> response = restTemplate.exchange(
+                "http://localhost:"+port+"/api/v1/justificatif/image",
+                HttpMethod.GET,
+                null,
+                byte[].class
+        );
+        assertEquals(HttpStatusCode.valueOf(400),response.getStatusCode());
+    }
 }

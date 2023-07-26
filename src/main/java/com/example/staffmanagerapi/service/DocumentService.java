@@ -1,12 +1,13 @@
 package com.example.staffmanagerapi.service;
 
-
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import com.example.staffmanagerapi.dto.document.CreateDocumentDto;
 import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
-import com.example.staffmanagerapi.exception.FileEmptyException;
-import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
-import com.example.staffmanagerapi.exception.FileNameExistsException;
+import com.example.staffmanagerapi.exception.*;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Document;
 import com.example.staffmanagerapi.model.User;
@@ -19,13 +20,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.example.staffmanagerapi.utils.Constants.AUTHORIZED_FILE_EXTENSION;
 import static com.example.staffmanagerapi.utils.Constants.BUCKET_NAME_JUSTIFICATIF;
@@ -87,6 +86,28 @@ public class DocumentService {
         return documentRepository.save(doc).getId();
     }
 
+    public byte[] downloadFile(String documentName) {
+        if (amazonS3Service.bucketNotExistOrEmpty(BUCKET_NAME_JUSTIFICATIF)) {
+            throw new BadRequestException("la bucket n'existe pas ou est vide");
+        }
+        try {
+
+            final S3Object s3Object = amazonS3Service.download(BUCKET_NAME_JUSTIFICATIF, documentName);
+            final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+
+            byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
+            log.info("File downloaded successfully.");
+            s3Object.close();
+            return content;
+        } catch (AmazonS3Exception e){
+            log.error("Error Message= " + e.getMessage());
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (final Exception ex) {
+            log.error("Error Message= " + ex.getMessage());
+            throw new BadRequestException(ex.getMessage());
+        }
+    }
 
     private boolean isValidFile(MultipartFile multipartFile){
         if (Objects.isNull(multipartFile.getOriginalFilename())) return false;

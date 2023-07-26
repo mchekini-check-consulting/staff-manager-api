@@ -10,21 +10,22 @@ import com.example.staffmanagerapi.dto.document.DocumentSearchRequestDTO;
 import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
 import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import com.example.staffmanagerapi.service.DocumentService;
+import com.example.staffmanagerapi.validators.document.DocumentNameValid;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
-
 import java.io.IOException;
 
 @RestController
 @RequestMapping("api/v1/justificatif")
 @Slf4j
+@Validated
 public class DocumentResource {
     private final DocumentService documentService;
     private final User user;
@@ -50,4 +51,12 @@ public class DocumentResource {
         return ResponseEntity.status(HttpStatus.OK).body(documents);
     }
 
+
+    @GetMapping("/{documentName}")
+    public ResponseEntity download(@PathVariable("documentName") @DocumentNameValid String documentName){
+        Object object = documentService.downloadFile(documentName);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documentName + "\"")
+                .body(object);
+    }
 }
