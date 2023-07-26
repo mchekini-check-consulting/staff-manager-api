@@ -3,7 +3,6 @@ spring:
     username: sa
     url: jdbc:h2:mem:test-db
     driverClassName: org.h2.Driver
-    password: password
   h2:
     console:
       enabled: true
@@ -13,3 +12,5 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: validate
+  flyway:
+    clean-disabled: false

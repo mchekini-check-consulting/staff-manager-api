@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class DocumentUnitTest {
 
     private static DateTimeFormatter formatter;
@@ -54,7 +56,7 @@ class DocumentUnitTest {
 
 
     @Test
-    public void itShouldUploadDocumentSuccess() {
+    void itShouldUploadDocumentSuccess() {
         DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("dd/MM/uuuu")
                 .withResolverStyle(ResolverStyle.STRICT);
@@ -91,7 +93,7 @@ class DocumentUnitTest {
     }
 
     @Test
-    public void itShouldUploadDocumentExtension() {
+    void itShouldUploadDocumentExtension() {
         // GIVEN
         Collaborator collab = Collaborator.builder()
                 .email("test@gmail.com")
@@ -120,7 +122,7 @@ class DocumentUnitTest {
 
 
     @Test
-    public void itShouldUploadDocumentEmpty() {
+    void itShouldUploadDocumentEmpty() {
         // GIVEN
         Collaborator collaborator = Collaborator.builder()
                 .email("test@gmail.com")
@@ -155,7 +157,7 @@ class DocumentUnitTest {
     }
 
     @Test
-    public void itShouldUploadDocumentUniqueName() {
+    void itShouldUploadDocumentUniqueName() {
         // GIVEN
         Collaborator collaborator = Collaborator.builder()
                 .email("test@gmail.com")
@@ -188,7 +190,7 @@ class DocumentUnitTest {
     }
 
     @Test
-    public void shouldGetDocumentsWithFilters() {
+    void shouldGetDocumentsWithFilters() {
         // Given
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);
@@ -230,7 +232,7 @@ class DocumentUnitTest {
     }
 
     @Test
-    public void shouldGetDocumentsWithNoFilters() {
+    void shouldGetDocumentsWithNoFilters() {
         // Given
         List<Document> mockDocuments = new ArrayList<>();
         Collaborator collaborator1 = Collaborator.builder()
@@ -282,7 +284,7 @@ class DocumentUnitTest {
     }
 
     @Test
-    public void shouldGetDocumentsWithTypesFilter() {
+    void shouldGetDocumentsWithTypesFilter() {
         // Given
         List<Document> mockDocuments = new ArrayList<>();
         Collaborator collaborator1 = Collaborator.builder()
