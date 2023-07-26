@@ -3,6 +3,7 @@ package com.example.staffmanagerapi.handler;
 import com.example.staffmanagerapi.exception.BadRequestException;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.FileNameExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -54,11 +57,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = {FileInvalidExtensionException.class, FileEmptyException.class})
+    @ExceptionHandler(value = {FileEmptyException.class})
     public ResponseEntity<Object> handleBadRequestException(
            RuntimeException ex
-    ) {;
+    ) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {FileInvalidExtensionException.class})
+    public ResponseEntity<Object> handleUnsupportedMediaTypeException(
+            RuntimeException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = { FileNameExistsException.class})
+    public ResponseEntity<Object> handleConflictException(
+            RuntimeException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
 }
