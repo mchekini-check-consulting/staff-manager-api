@@ -10,10 +10,8 @@ import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.DocumentRepository;
 import com.example.staffmanagerapi.utils.AccessTokenProvider;
 import com.google.common.collect.Lists;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -21,9 +19,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,8 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@Disabled
-//@Sql(scripts = "classpath:testDocument.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class DocumentIntegrationTest {
     @LocalServerPort
     Integer port;
@@ -46,12 +40,14 @@ class DocumentIntegrationTest {
     private String ADMIN_ACCESS_TOKEN;
     private final CollaboratorRepository collaboratorRepository;
     private final DocumentRepository documentRepository;
+    private final Flyway flyway;
 
     @Autowired
-    public DocumentIntegrationTest(TestRestTemplate restTemplate, CollaboratorRepository collaboratorRepository, DocumentRepository documentRepository) {
+    public DocumentIntegrationTest(TestRestTemplate restTemplate, CollaboratorRepository collaboratorRepository, DocumentRepository documentRepository, Flyway flyway) {
         this.restTemplate = restTemplate;
         this.collaboratorRepository = collaboratorRepository;
         this.documentRepository = documentRepository;
+        this.flyway = flyway;
     }
 
 
@@ -60,10 +56,10 @@ class DocumentIntegrationTest {
         collaboratorRepository.deleteAll();
         Collaborator collaborator1 = Collaborator.builder().id(1L)
                 .lastName("Doe")
-                .firstName("'John'")
+                .firstName("John")
                 .address("New York City")
                 .email("john.doe@example.com")
-                .phone("'1234567890'")
+                .phone("1234567890")
                 .build();
 
         Collaborator collaborator2 = Collaborator.builder().lastName("Smith").id(2L)
@@ -106,7 +102,6 @@ class DocumentIntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void shouldUploadDocument() {
 
         MockMultipartFile file = new MockMultipartFile("file", "test.pdf",
@@ -133,10 +128,16 @@ class DocumentIntegrationTest {
         this.ADMIN_ACCESS_TOKEN = AccessTokenProvider.getAdminAccessToken("test-integration", "test-integration");
     }
 
+    @BeforeAll
+    public void clearDatabaseAndInitData(){
+        flyway.clean();
+        flyway.migrate();
+        initData();
+    }
+
     // Test case 0-0
     @Test
-    @DirtiesContext
-    public void itShouldReturnAllDocumentsWithNoFilters() throws Exception {
+    void itShouldReturnAllDocumentsWithNoFilters() throws Exception {
         // Given
         List<Long> collaborators = new ArrayList<>();
         List<DocumentTypeEnum> types = new ArrayList<>();
@@ -214,8 +215,7 @@ class DocumentIntegrationTest {
 
     // Test case 1-0
     @Test
-    @DirtiesContext
-    public void itShouldReturnAllDocumentOfCollaboratorId1() throws Exception {
+    void itShouldReturnAllDocumentOfCollaboratorId1() throws Exception {
         // Given
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);
@@ -261,8 +261,7 @@ class DocumentIntegrationTest {
 
     // Test case 2-0
     @Test
-    @DirtiesContext
-    public void itShouldReturnDocumentsOfCollaboratorId1and2() throws Exception {
+    void itShouldReturnDocumentsOfCollaboratorId1and2() throws Exception {
         // Given
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);
@@ -325,8 +324,7 @@ class DocumentIntegrationTest {
 
     // Test case 1-1
     @Test
-    @DirtiesContext
-    public void itShouldReturnDocumentsOfCollaboratorId1andTypeTransport() throws Exception {
+    void itShouldReturnDocumentsOfCollaboratorId1andTypeTransport() throws Exception {
         // Given
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);
@@ -365,8 +363,7 @@ class DocumentIntegrationTest {
 
     // Test case 2-1
     @Test
-    @DirtiesContext
-    public void itShouldReturnCartesVitalesOfCollaborator1and2() throws Exception {
+    void itShouldReturnCartesVitalesOfCollaborator1and2() throws Exception {
         // Given
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);
@@ -414,8 +411,7 @@ class DocumentIntegrationTest {
 
     // Test case n-n
     @Test
-    @DirtiesContext
-    public void itShouldReturnAllDocumentsForAllFilters() throws Exception {
+    void itShouldReturnAllDocumentsForAllFilters() throws Exception {
         // Given
         List<Long> collaborators = new ArrayList<>();
         collaborators.add(1L);

@@ -6,16 +6,18 @@ import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.model.Mission;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MissionUnitTest {
+@ActiveProfiles("test")
+class MissionUnitTest {
     private ModelMapper modelMapper = new ModelMapper();
 
     @Test
-    public void WhenConvertMissionEntityToMissionDTO_thenCorrect(){
+    void WhenConvertMissionEntityToMissionDTO_thenCorrect(){
 
         //GIVEN
         Customer customer = Customer.builder()

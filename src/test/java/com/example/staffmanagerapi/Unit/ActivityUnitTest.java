@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 
 @ExtendWith(MockitoExtension.class)
-public class ActivityUnitTest {
+@ActiveProfiles("test")
+class ActivityUnitTest {
 
   @InjectMocks
   private ActivityService activityService;
@@ -39,7 +41,7 @@ public class ActivityUnitTest {
   private CollaboratorRepository collaboratorRepository;
 
   @Test
-  public void itShouldCreateAnActivity() {
+  void itShouldCreateAnActivity() {
     // GIVEN
     User user = User.builder().email("test@test.com").build();
 
