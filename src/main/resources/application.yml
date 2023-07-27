@@ -22,3 +22,12 @@ aws:
   access-key-id: AKIAS7WDEOQ4EJUQXRA4
   secret-access.key: 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
   region: us-east-1
+
+
+
+javamelody:
+  enabled: true
+  excluded-datasources: secretSource,topSecretSource
+  spring-monitoring-enabled: true
+  init-parameters:
+    log: true
