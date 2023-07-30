@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_Table_Based" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+	<property name="template.engine" value="tabular_template"/>
+	<style name="Base" isDefault="true" fontName="Roboto"/>
+	<style name="Title" forecolor="#FFFFFF" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontSize="18" isBold="false"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EEEFF0"/>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="tableDataset" uuid="6b710013-f162-4365-a37c-ef6da358b373">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<parameter name="logo" class="java.lang.Object"/>
+	<parameter name="company-name" class="java.lang.Object"/>
+	<parameter name="company-siret" class="java.lang.Object"/>
+	<parameter name="company-tva" class="java.lang.Object"/>
+	<parameter name="company-contact-name" class="java.lang.Object"/>
+	<parameter name="company-contact-email" class="java.lang.Object"/>
+	<parameter name="company-adress" class="java.lang.Object"/>
+	<parameter name="company-capital" class="java.lang.Object"/>
+	<field name="collaboratorLastName" class="java.lang.Object"/>
+	<field name="collaboratorFirstName" class="java.lang.Object"/>
+	<field name="declaredDays" class="java.lang.Object"/>
+	<field name="billedDays" class="java.lang.Object"/>
+	<field name="rttRedemption" class="java.lang.Object"/>
+	<field name="absenceDays" class="java.lang.Object"/>
+	<field name="extraHoursInDays" class="java.lang.Object"/>
+	<field name="onCallHoursInDays" class="java.lang.Object"/>
+	<title>
+		<band height="145" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="95" width="556" height="1" forecolor="#A1A1A1" uuid="806ce5df-1219-4876-ae0c-ca7405b1f246">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="408" y="99" width="64" height="20" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Left">
+					<font isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Imprimé le ]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="472" y="99" width="84" height="20" uuid="bb10dbe1-0a4f-4722-9953-c163b63cf979"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("EEEE d MMMM yyyy", new Locale("fr", "FR")).format(new Date())]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center">
+				<reportElement x="0" y="5" width="150" height="84" uuid="94883631-a913-43e2-b182-ab8d77d0181e"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="472" y="119" width="84" height="20" uuid="3836ce65-eca3-4cad-a6de-b1818def0a2b"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("MMMM", Locale.FRENCH).format(new Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="408" y="119" width="64" height="20" uuid="0b3f9342-da78-4cfa-9fc5-2301c4749678"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Left">
+					<font isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CRA du]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="176" y="8" width="204" height="24" uuid="c9dba5eb-dd42-4833-a7da-9a97960c4b03"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{company-name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="32" width="204" height="14" uuid="87b4eb80-9a5a-48b0-85c3-8e89d9d1a5bb"/>
+				<textFieldExpression><![CDATA["Adresse : "+$P{company-adress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="46" width="204" height="14" uuid="b01ca316-d8b6-400b-8648-8ac40aa84a8d"/>
+				<textFieldExpression><![CDATA["SIRET : "+$P{company-siret}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="74" width="204" height="14" uuid="77c38deb-8544-4d6e-88ae-56ff10d18a86"/>
+				<textFieldExpression><![CDATA["TVA : "+$P{company-tva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="60" width="204" height="14" uuid="4ce53409-be8a-480d-b16c-b8c260cd5744"/>
+				<textFieldExpression><![CDATA["Capital : "+$P{company-capital}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="407" y="15" width="83" height="17" uuid="30317234-4c90-470a-8277-d4b34e7eb33e"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Info Contact :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="407" y="34" width="149" height="16" uuid="2975fe56-af42-4f77-ab55-9bf564b9e228"/>
+				<textFieldExpression><![CDATA["Nom : "+$P{company-contact-name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="407" y="51" width="149" height="19" uuid="1ea47011-ed5c-4653-9ac2-a327050bf64f"/>
+				<textFieldExpression><![CDATA["Email : "+$P{company-contact-email}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="-1" y="139" width="560" height="4" forecolor="#A1A1A1" uuid="0fcb8a24-e56d-4bb2-a0d6-75f6bdd587db"/>
+			</line>
+			<staticText>
+				<reportElement x="-1" y="108" width="380" height="24" uuid="254f4465-012c-499e-9692-5a4a7cc65f7e"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Rapport Compte Rendu D'activité]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="22">
+			<rectangle>
+				<reportElement x="0" y="1" width="554" height="20" forecolor="#0066CC" backcolor="#0066CC" uuid="8e7f090d-9e6b-4709-83f2-771219c98a32"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="6" width="58" height="14" forecolor="#FFFFFF" uuid="d3631b55-5289-49de-a305-897f3e4cfd4e"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Collaborateur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="252" y="6" width="45" height="14" forecolor="#FFFFFF" uuid="69729dba-976e-4156-a8e1-ad1cd334b37c"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rachat RTT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="6" width="58" height="14" forecolor="#FFFFFF" uuid="96650e3d-5977-44be-a5b7-99fca49ffa50"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jours Factués]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="6" width="58" height="14" forecolor="#FFFFFF" uuid="f74beb12-8a1a-4ff8-835d-1ae3afcd2478"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jours Déclarés]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="301" y="6" width="45" height="14" forecolor="#FFFFFF" uuid="cc39a672-576e-4baf-861c-8a4367c7e4ca"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Absences]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="6" width="106" height="14" forecolor="#FFFFFF" uuid="d330e146-ecb3-4e92-af34-159f04d0f9c4"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Heures Supplémentaires (j)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="6" width="91" height="14" forecolor="#FFFFFF" uuid="a46ed14d-4070-4cef-81be-86b7adaa7634"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Heures D'astreintes (j)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25">
+			<textField textAdjust="StretchHeight">
+				<reportElement x="6" y="3" width="119" height="17" uuid="3b398ea3-727b-4a97-8fe2-75053647265e"/>
+				<textFieldExpression><![CDATA[$F{collaboratorLastName}+" "+$F{collaboratorFirstName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="125" y="3" width="58" height="17" uuid="a61068ea-b666-453b-9e00-99445735fc23"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{declaredDays}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="4" width="58" height="16" uuid="c2db2cf8-fce8-4d5d-8b88-541397b7b818"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{billedDays}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="4" width="45" height="16" uuid="3cb51edb-dd7e-4fdb-82bd-27f71657422c"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{rttRedemption}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="301" y="4" width="45" height="16" uuid="626b088d-bcf7-409c-b97c-8fa9b7459cef"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{absenceDays}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="4" width="106" height="16" uuid="a5b18b16-7797-4183-ab96-1fafea55e118"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{extraHoursInDays}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="4" width="91" height="16" uuid="26e6fed0-6fcd-43e0-aecf-84f58a8487dd"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{onCallHoursInDays}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="1" height="25" uuid="394e963c-78ab-4daf-aca3-27189a948875"/>
+			</line>
+			<line>
+				<reportElement x="125" y="0" width="1" height="24" uuid="cca5b9bf-d261-418c-897e-3ff07efad2b9"/>
+			</line>
+			<line>
+				<reportElement x="187" y="0" width="1" height="24" uuid="b9be18fd-3d50-42a2-a480-b01495989a0a"/>
+			</line>
+			<line>
+				<reportElement x="252" y="0" width="1" height="24" uuid="809441c6-93c5-49b1-bb52-730f075184f6"/>
+			</line>
+			<line>
+				<reportElement x="301" y="0" width="1" height="24" uuid="c8b0e4d4-2a74-40b2-9501-d46ba73c68ba"/>
+			</line>
+			<line>
+				<reportElement x="349" y="0" width="1" height="25" uuid="f059e82e-b194-458e-bda4-add0afa78942"/>
+			</line>
+			<line>
+				<reportElement x="460" y="0" width="1" height="25" uuid="e265f711-bd81-40eb-88cf-52c1bdd97662"/>
+			</line>
+			<line>
+				<reportElement x="554" y="0" width="1" height="25" uuid="e27994ff-3484-4579-ba77-634fdf5fa353"/>
+			</line>
+			<line>
+				<reportElement x="0" y="24" width="555" height="1" uuid="fbcede79-7f6e-4d4a-b8f2-75d26d0c3f69"/>
+			</line>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="98">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="65" width="556" height="30" backcolor="#E6E8E9" uuid="36aa233d-4305-48e6-974a-1bbf89bb3c8f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Ce rapport fournit des informations à titre informatif seulement]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="293" y="5" width="261" height="55" forecolor="#A1A1A1" uuid="d4a6ae17-d764-4d21-907a-4b45ee5a1499"/>
+				<box>
+					<topPen lineWidth="1.1" lineStyle="Dashed"/>
+					<leftPen lineWidth="1.1" lineStyle="Dashed"/>
+					<bottomPen lineWidth="1.1" lineStyle="Dashed"/>
+					<rightPen lineWidth="1.1" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Signature résponsable ( lu et approuvé )]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="440" y="73" width="110" height="16" uuid="fe86e507-b215-493c-94a7-26495809a5ab"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}+" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>
