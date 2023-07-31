@@ -24,7 +24,7 @@ public class Mission {
     private LocalDate endingDateMission;
 
     @ManyToOne
-    @JoinColumn(name = "collaborator_id")
+    @JoinColumn(name = "collaborator_id", nullable = false)
     private Collaborator collaborator;
 
     @ManyToOne
