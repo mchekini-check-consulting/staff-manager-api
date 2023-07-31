@@ -1,14 +1,12 @@
 spring:
   datasource:
     url: jdbc-secretsmanager:postgresql://qua-staff-manager-db.chqar689pasc.us-east-2.rds.amazonaws.com:5432/postgres
-    username: sm-qua-db-credentials
+    username: sm-qua-db-creds
     driverClassName: com.amazonaws.secretsmanager.sql.AWSSecretsManagerPostgreSQLDriver
-  jpa:
-    database: postgresql
-    hibernate:
-      ddl-auto: validate
-      naming:
-        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+
+bucket:
+  justificatifs: qua-justificatifs-check-consulting
+  fiche-de-paie: qua-fiche-de-paie-check-consulting
+  factures: qua-factures-check-consulting

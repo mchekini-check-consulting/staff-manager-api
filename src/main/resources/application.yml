@@ -9,6 +9,15 @@ oauth2:
       issuer-uri-admin: http://ci.check-consulting.net:10000/auth/realms/staff-manager-admin
 
 spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: validate
+      naming:
+        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
       max-file-size: 10MB

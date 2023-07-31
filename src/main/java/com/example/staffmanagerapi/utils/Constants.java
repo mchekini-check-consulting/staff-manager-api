@@ -48,6 +48,4 @@ public class Constants {
             ActivityCategoryEnum.RACHAT_RTT
     );
 
-    public static String BUCKET_NAME_JUSTIFICATIF = "justificatifs-check-consulting";
-
 }

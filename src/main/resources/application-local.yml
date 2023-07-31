@@ -4,15 +4,12 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
-  jpa:
-    database: postgresql
-    hibernate:
-      ddl-auto: validate
-      naming:
-        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+bucket:
+  justificatifs: int-justificatifs-check-consulting
+  fiche-de-paie: int-fiche-de-paie-check-consulting
+  factures: int-factures-check-consulting
 
 
 
