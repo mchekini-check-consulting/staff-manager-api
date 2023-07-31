@@ -3,12 +3,12 @@ spring:
     url: jdbc-secretsmanager:postgresql://int-sm-db.chqar689pasc.us-east-2.rds.amazonaws.com:5432/postgres
     username: sm-int-db-credentials
     driverClassName: com.amazonaws.secretsmanager.sql.AWSSecretsManagerPostgreSQLDriver
-  jpa:
-    database: postgresql
-    hibernate:
-      ddl-auto: validate
-      naming:
-        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+
+
+bucket:
+  justificatifs: int-justificatifs-check-consulting
+  fiche-de-paie: int-fiche-de-paie-check-consulting
+  factures: int-factures-check-consulting
+
