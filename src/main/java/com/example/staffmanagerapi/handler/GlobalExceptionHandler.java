@@ -1,11 +1,15 @@
 package com.example.staffmanagerapi.handler;
 
+import com.amazonaws.Response;
+import com.example.staffmanagerapi.enums.ErrorsEnum;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.staffmanagerapi.exception.BadRequestException;
 import com.example.staffmanagerapi.exception.FileEmptyException;
 import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.template.ResponseTemplate;
 import com.example.staffmanagerapi.exception.FileNameExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,74 +28,149 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFoundException(
-            EntityNotFoundException ex
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(ex.getMessage());
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<ResponseTemplate> handleEntityNotFoundException(
+    EntityNotFoundException ex
+  ) {
+    return ResponseEntity
+      .status(HttpStatus.NOT_ACCEPTABLE)
+      .body(
+        ResponseTemplate
+          .builder()
+          .error(ErrorsEnum.ENTITY_NOT_FOUND)
+          .message(ex.getMessage())
+          .build()
+      );
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ResponseTemplate> handleException(
+    MethodArgumentNotValidException ex
+  ) {
+    BindingResult bindingResult = ex.getBindingResult();
+    List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+    Map<String, String> errorMessages = new HashMap<>();
+
+    for (FieldError fieldError : fieldErrors) {
+      errorMessages.put(fieldError.getField(), fieldError.getDefaultMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleException(
-            MethodArgumentNotValidException ex
-    ) {
-        BindingResult bindingResult = ex.getBindingResult();
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        Map<String, String> errorMessages = new HashMap<>();
+    ResponseTemplate response = ResponseTemplate
+      .builder()
+      .error(ErrorsEnum.VALIDATION_ERROR)
+      .message("Vos informations ne sont pas fiable.")
+      .validations(errorMessages)
+      .build();
 
-        for (FieldError fieldError : fieldErrors) {
-            errorMessages.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
-    }
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ResponseTemplate> handleException(
+    HttpMessageNotReadableException ex
+  ) {
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ResponseTemplate
+          .builder()
+          .error(ErrorsEnum.HTTP_MESSAGE_NOT_READABLE)
+          .message(ex.getMessage())
+          .build()
+      );
+  }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleException(
-            HttpMessageNotReadableException ex
-    ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ResponseTemplate> handleException(
+    BadRequestException ex
+  ) {
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ResponseTemplate
+          .builder()
+          .error(ErrorsEnum.BAD_REQUEST)
+          .message(ex.getMessage())
+          .build()
+      );
+  }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Object> handleException(BadRequestException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
+  @ExceptionHandler(
+    value = {FileEmptyException.class }
+  )
+  public ResponseEntity<ResponseTemplate> handleBadRequestException(
+    RuntimeException ex
+  ) {
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ResponseTemplate
+          .builder()
+          .error(ErrorsEnum.RUNTIME_EXCEPTION)
+          .message(ex.getMessage())
+          .build()
+      );
+  }
 
-    @ExceptionHandler(value = {FileEmptyException.class})
-    public ResponseEntity<Object> handleBadRequestException(
-           RuntimeException ex
-    ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(value = {FileInvalidExtensionException.class})
-    public ResponseEntity<Object> handleUnsupportedMediaTypeException(
+    @ExceptionHandler(
+            value = { FileInvalidExtensionException.class }
+    )
+    public ResponseEntity<ResponseTemplate> handleUnsupportedMediaTypeException(
             RuntimeException ex
     ) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(
+                        ResponseTemplate
+                                .builder()
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .message(ex.getMessage())
+                                .build()
+                );
     }
 
     @ExceptionHandler(value = { FileNameExistsException.class})
-    public ResponseEntity<Object> handleConflictException(
+    public ResponseEntity<ResponseTemplate> handleConflictException(
             RuntimeException ex
     ) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ResponseTemplate
+                                .builder()
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .message(ex.getMessage())
+                                .build()
+                );
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class})
-    public ResponseEntity<Object> handleConstraintViolationException(
+    public ResponseEntity<ResponseTemplate> handleConstraintViolationException(
             RuntimeException ex
-    ) {;
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ResponseTemplate
+                                .builder()
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .message(ex.getMessage())
+                                .build()
+                );
     }
 
     @ExceptionHandler(value = {AmazonS3Exception.class})
-    public ResponseEntity<Object> handleIOException(
+    public ResponseEntity<ResponseTemplate> handleIOException(
             RuntimeException ex
     ) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ResponseTemplate
+                                .builder()
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .message(ex.getMessage())
+                                .build()
+                );
     }
 }

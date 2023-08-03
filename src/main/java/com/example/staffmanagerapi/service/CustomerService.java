@@ -2,7 +2,6 @@ package com.example.staffmanagerapi.service;
 
 import com.example.staffmanagerapi.dto.CustomerCreationDto;
 import com.example.staffmanagerapi.dto.customer.CustomerDto;
-import com.example.staffmanagerapi.dto.customer.out.GetCustomersOutDto;
 import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.repository.CustomerRepository;
 import java.util.List;
@@ -32,9 +31,8 @@ public class CustomerService {
     customerRepository.save(customerEntity);
   }
 
-  public GetCustomersOutDto getCustomers() {
-    List<Customer> customers =
-      this.customerRepository.findAll(Sort.by(Sort.Direction.DESC, "customerId"));
+  public List<CustomerDto> getCustomers() {
+    List<Customer> customers = this.customerRepository.findAll(Sort.by(Sort.Direction.DESC, "customerId"));
 
     modelMapper
       .typeMap(Customer.class, CustomerDto.class)
@@ -45,6 +43,6 @@ public class CustomerService {
       new TypeToken<List<CustomerDto>>() {}.getType()
     );
 
-    return GetCustomersOutDto.builder().customers(parsedCustomers).build();
+    return parsedCustomers;
   }
 }

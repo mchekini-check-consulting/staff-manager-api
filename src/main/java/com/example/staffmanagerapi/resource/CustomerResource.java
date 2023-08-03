@@ -1,10 +1,12 @@
 package com.example.staffmanagerapi.resource;
 
 import com.example.staffmanagerapi.dto.CustomerCreationDto;
-import com.example.staffmanagerapi.dto.customer.out.GetCustomersOutDto;
+import com.example.staffmanagerapi.dto.customer.CustomerDto;
 import com.example.staffmanagerapi.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -38,7 +40,7 @@ public class CustomerResource {
     }
 
     @GetMapping 
-    public ResponseEntity<GetCustomersOutDto> getCustomers() {
+    public ResponseEntity<List<CustomerDto>> getCustomers() {
         return ResponseEntity.ok(this.customerService.getCustomers());
     }
 }
