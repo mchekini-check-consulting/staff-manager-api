@@ -21,7 +21,7 @@ public class PaySheetResource {
 
     @PostMapping()
     public ResponseEntity<?> upload(@ModelAttribute @Valid CreatePaySheetDTO paysheet) throws IOException {
-        paySheetService.uploadFile(paysheet);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        Integer created = paySheetService.uploadFile(paysheet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }
