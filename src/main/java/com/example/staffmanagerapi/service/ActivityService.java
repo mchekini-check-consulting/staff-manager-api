@@ -2,9 +2,11 @@ package com.example.staffmanagerapi.service;
 
 import com.example.staffmanagerapi.dto.activity.ActivityDto;
 import com.example.staffmanagerapi.dto.activity.out.CompteRenduActiviteOutDto;
+import com.example.staffmanagerapi.dto.mission.in.MissionDto;
 import com.example.staffmanagerapi.enums.ActivityCategoryEnum;
 import com.example.staffmanagerapi.model.Activity;
 import com.example.staffmanagerapi.model.Collaborator;
+import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.ActivityRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,10 +27,12 @@ public class ActivityService {
 
     private final ActivityRepository activityRepository;
     private final CollaboratorService collaboratorService;
+    private final MissionService missionService;
 
-    public ActivityService(ActivityRepository activityRepository1, CollaboratorService collaboratorService1) {
+    public ActivityService(ActivityRepository activityRepository1, CollaboratorService collaboratorService1, MissionService missionService1) {
         this.activityRepository = activityRepository1;
         this.collaboratorService = collaboratorService1;
+        this.missionService = missionService1;
     }
 
     public static Double sumDaysByCategory(List<Activity> activities, Set<ActivityCategoryEnum> categories) {
@@ -64,6 +68,8 @@ public class ActivityService {
                 "Collaborator doesn't exist."
         );
 
+        Optional<Mission> mission = this.missionService.getCollaboratorActiveMission(collaborator.get());
+
         List<Activity> records = data
                 .stream()
                 .map(row ->
@@ -74,6 +80,7 @@ public class ActivityService {
                                 .category(row.getCategory())
                                 .comment(row.getComment())
                                 .collaborator(collaborator.get())
+                                .mission(this.shouldAddMission(row.getCategory()) && mission.isPresent() ? mission.get() : null)
                                 .build()
                 )
                 .toList();
@@ -143,5 +150,13 @@ public class ActivityService {
             cra.add(dto);
         });
         return cra;
+    }
+
+    Boolean shouldAddMission(ActivityCategoryEnum category) {
+        if (category == ActivityCategoryEnum.JOUR_TRAVAILLE) return true;
+        if (category == ActivityCategoryEnum.HEURE_SUPPLEMENTAIRE) return true;
+        if (category == ActivityCategoryEnum.ASTREINTE) return true;
+
+        return false;
     }
 }
