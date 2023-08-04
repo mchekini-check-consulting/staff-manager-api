@@ -28,7 +28,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice {
     ServerHttpResponse response
   ) {
     String requestPath = request.getURI().getPath();
-    if (requestPath.equals("/v3/api-docs")) {
+    if (requestPath.equals("/v3/api-docs") || requestPath.startsWith("/v3/api-docs/swagger-config")) {
       log.warn("You are calling the swagger endpoint, no need to apply ResponseTemplate !");
       return body;
     }
