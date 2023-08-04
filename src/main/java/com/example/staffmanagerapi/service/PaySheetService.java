@@ -22,7 +22,7 @@ import java.util.Objects;
 public class PaySheetService {
 
     @Value("${bucket.fiche-de-paie}")
-    private String PaysheetBucket;
+    private String paysheetBucket;
     private final PaySheetRepository paySheetRepository;
     private final CollaboratorRepository collaboratorRepository;
     private final AmazonS3Service amazonS3Service;
@@ -41,11 +41,17 @@ public class PaySheetService {
             throw new FileEmptyException("Veuillez séléctionner un fichier valide non vide");
         }
 
+        boolean isAttributed = paySheetRepository.existsByCollaboratorAndMonthYear(collaborator, paySheetDTO.getMonthYear());
+
+        if(isAttributed){
+            throw new FileNameExistsException("Fiche de paie déjà attribuée");
+        }
+
         MultipartFile fileContent = paySheetDTO.getFile();
         String name = fileContent.getOriginalFilename();
 
         boolean docExists = paySheetRepository.existsByName(name);
-//
+
         if (docExists) {
             throw new FileNameExistsException("Ce nom de document est déjà existant. Merci de modifier le nom");
         }
@@ -58,9 +64,9 @@ public class PaySheetService {
         }
 
         // Uploading file to s3s
-        amazonS3Service.upload(fileContent, PaysheetBucket, name);
+        amazonS3Service.upload(fileContent, paysheetBucket, name);
 
-        Paysheet paysheet = new Paysheet().builder()
+        Paysheet paysheet = Paysheet.builder()
                 .collaborator(collaborator)
                 .monthYear(paySheetDTO.getMonthYear())
                 .name(name)
