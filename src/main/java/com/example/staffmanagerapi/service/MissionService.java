@@ -3,6 +3,7 @@ package com.example.staffmanagerapi.service;
 import com.example.staffmanagerapi.dto.customer.CustomerDto;
 import com.example.staffmanagerapi.dto.mission.in.CreateMissionInDto;
 import com.example.staffmanagerapi.dto.mission.in.MissionDto;
+import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
@@ -12,12 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeMap;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +74,14 @@ public class MissionService {
                 .collect(Collectors.toList());
     }
 
+    public Optional<Mission> getCollaboratorActiveMission(Collaborator collaborator) {
+        Specification<Mission> specification = Specification
+          .where(this.filterByCollaborator(collaborator))
+          .and(this.filterByActiveDate());
+        
+        return this.missionRepository.findOne(specification); 
+    }
+
     private MissionDto convertEntityToDto(Mission mission){
         modelMapper.
                 typeMap(Mission.class, MissionDto.class).
@@ -80,5 +91,17 @@ public class MissionService {
                 .addMappings(mapper-> mapper.map(src->src.getCollaborator().getLastName(),MissionDto::setLastName));
 
         return modelMapper.map(mission, MissionDto.class);
+    }
+
+    private Specification<Mission> filterByCollaborator(Collaborator collaborator) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("collaborator"), collaborator);
+        };
+    }
+
+    private Specification<Mission> filterByActiveDate() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.between(criteriaBuilder.currentDate(), root.get("startingDateMission"), root.get("endingDateMission"));
+        };
     }
 }

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(
         info = @Info(
                 title = "Staff Manager API",
-                description = "Sur Postman cliquez sur Import => coller cet url : 'http://check-consulting.net:8080/v3/api-docs' , ensuite choisir 'Postman Collection'",
                 contact = @Contact(
                         name = "M. Chekini",
                         url = "https://github.com/mchekini-check-consulting"
@@ -17,12 +16,12 @@ import io.swagger.v3.oas.annotations.servers.Server;
         ),
         servers = {
                 @Server(
-                        url = "http://check-consulting.net:8080",
-                        description = "Serveur Environnement integration"
+                        url = "http://qua-vm-1.check-consulting.net:8080",
+                        description = "Serveur Environnement QUA - VM N°1"
                 ),
                 @Server(
-                        url = "http://localhost:8080",
-                        description = "Serveur Environnement local : Intellij IDEA"
+                        url = "http://qua-vm-2.check-consulting.net:8080",
+                        description = "Serveur Environnement QUA - VM N°2"
                 )
         }
 )

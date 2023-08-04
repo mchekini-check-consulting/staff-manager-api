@@ -26,6 +26,10 @@ public class Activity {
   @JoinColumn(name = "collaborator_id")
   private Collaborator collaborator;
 
+  @ManyToOne
+  @JoinColumn(name = "mission_id")
+  private Mission mission;
+
   private LocalDate date;
   private Integer quantity;
   @Enumerated(STRING)
