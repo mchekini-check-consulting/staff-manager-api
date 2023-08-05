@@ -96,7 +96,7 @@ public class ActivityService {
           .category(row.getCategory())
           .comment(row.getComment())
           .collaborator(collaborator.get())
-          .mission(activeMissions.size() > 0 ? activeMissions.get(0) : null)
+          .mission((activeMissions.size() > 0 && shouldAddMission(row.getCategory())) ? activeMissions.get(0) : null)
           .build();
       })
       .toList();

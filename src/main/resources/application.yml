@@ -35,4 +35,4 @@ javamelody:
   excluded-datasources: secretSource,topSecretSource
   spring-monitoring-enabled: true
   init-parameters:
-    log: true
+    log: false

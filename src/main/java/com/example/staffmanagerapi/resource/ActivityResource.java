@@ -32,11 +32,10 @@ public class ActivityResource {
     }
 
     @PostMapping
-    // @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
+    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
     public ResponseEntity<?> createActivities(
             @RequestBody @Valid CreateActivityInDto data
     ) {
-        System.out.println("Hey"+ user.getEmail());
         this.activityService.createActivities(user, data.getActivities());
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).build();
     }
