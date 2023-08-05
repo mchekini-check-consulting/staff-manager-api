@@ -1,7 +1,7 @@
 package com.example.staffmanagerapi.dto.society;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,28 +14,31 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SocietyDto {
 
-  @NotNull
+  @NotBlank
   private String name;
 
-  @NotNull
-  @Pattern(regexp = "^\\d{14}$", message="Must be a 14 length digit")
+  @NotBlank
+  @Pattern(regexp = "^\\d{14}$", message = "Must be a 14 length digit")
   private String siret;
 
-  @NotNull
-  @Pattern(regexp = "^FR\\d{11}$", message="Must start with FR followed by a 11 length digit")
+  @NotBlank
+  @Pattern(
+    regexp = "^FR\\d{11}$",
+    message = "Must start with FR followed by a 11 length digit"
+  )
   private String vat;
 
-  @NotNull
+  @NotBlank
   private String contact;
 
-  @NotNull
+  @NotBlank
   @Email
   private String email;
 
-  @NotNull
+  @NotBlank
   private String address;
 
-  @NotNull
-  @Pattern(regexp = "^\\d+$", message="Must have only digits")
+  @NotBlank
+  @Pattern(regexp = "^\\d+$", message = "Must have only digits")
   private String capital;
 }

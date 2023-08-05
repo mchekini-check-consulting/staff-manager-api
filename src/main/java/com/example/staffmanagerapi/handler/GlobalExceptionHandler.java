@@ -1,6 +1,5 @@
 package com.example.staffmanagerapi.handler;
 
-import com.amazonaws.Response;
 import com.example.staffmanagerapi.enums.ErrorsEnum;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.staffmanagerapi.exception.BadRequestException;
@@ -9,7 +8,6 @@ import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
 import com.example.staffmanagerapi.template.ResponseTemplate;
 import com.example.staffmanagerapi.exception.FileNameExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +34,7 @@ public class GlobalExceptionHandler {
       .body(
         ResponseTemplate
           .builder()
-          .error(ErrorsEnum.ENTITY_NOT_FOUND)
+          .error(ErrorsEnum.ENTITY_NOT_FOUND.toString())
           .message(ex.getMessage())
           .build()
       );
@@ -57,7 +54,7 @@ public class GlobalExceptionHandler {
 
     ResponseTemplate response = ResponseTemplate
       .builder()
-      .error(ErrorsEnum.VALIDATION_ERROR)
+      .error(ErrorsEnum.VALIDATION_ERROR.toString())
       .message("Vos informations ne sont pas fiable.")
       .validations(errorMessages)
       .build();
@@ -74,7 +71,7 @@ public class GlobalExceptionHandler {
       .body(
         ResponseTemplate
           .builder()
-          .error(ErrorsEnum.HTTP_MESSAGE_NOT_READABLE)
+          .error(ErrorsEnum.HTTP_MESSAGE_NOT_READABLE.toString())
           .message(ex.getMessage())
           .build()
       );
@@ -89,7 +86,7 @@ public class GlobalExceptionHandler {
       .body(
         ResponseTemplate
           .builder()
-          .error(ErrorsEnum.BAD_REQUEST)
+          .error(ErrorsEnum.BAD_REQUEST.toString())
           .message(ex.getMessage())
           .build()
       );
@@ -106,7 +103,7 @@ public class GlobalExceptionHandler {
       .body(
         ResponseTemplate
           .builder()
-          .error(ErrorsEnum.RUNTIME_EXCEPTION)
+          .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
           .message(ex.getMessage())
           .build()
       );
@@ -123,7 +120,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ResponseTemplate
                                 .builder()
-                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
                                 .message(ex.getMessage())
                                 .build()
                 );
@@ -138,7 +135,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ResponseTemplate
                                 .builder()
-                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
                                 .message(ex.getMessage())
                                 .build()
                 );
@@ -153,7 +150,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ResponseTemplate
                                 .builder()
-                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
                                 .message(ex.getMessage())
                                 .build()
                 );
@@ -168,7 +165,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ResponseTemplate
                                 .builder()
-                                .error(ErrorsEnum.RUNTIME_EXCEPTION)
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
                                 .message(ex.getMessage())
                                 .build()
                 );

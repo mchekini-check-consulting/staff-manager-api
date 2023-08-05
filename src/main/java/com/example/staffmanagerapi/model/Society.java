@@ -1,7 +1,5 @@
 package com.example.staffmanagerapi.model;
 
-import static jakarta.persistence.EnumType.STRING;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

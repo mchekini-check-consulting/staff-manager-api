@@ -21,7 +21,7 @@ public class SocietyResource {
 
   @PostMapping
   @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
-  public void createOrUpdateSocietyInfo(@RequestBody @Valid SocietyDto data) {
-    this.societyService.createOrUpdateSocietyInfo(data);
+  public SocietyDto createOrUpdateSocietyInfo(@RequestBody @Valid SocietyDto data) {
+    return this.societyService.createOrUpdateSocietyInfo(data);
   }
 }
