@@ -36,7 +36,6 @@ public class ActivityResource {
     public ResponseEntity<?> createActivities(
             @RequestBody @Valid CreateActivityInDto data
     ) {
-        System.out.println("Hey");
         this.activityService.createActivities(user, data.getActivities());
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).build();
     }
