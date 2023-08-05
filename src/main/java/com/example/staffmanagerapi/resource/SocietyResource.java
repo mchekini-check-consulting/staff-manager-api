@@ -4,10 +4,9 @@ import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.society.SocietyDto;
 import com.example.staffmanagerapi.service.SocietyService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("api/v1/society")
@@ -20,8 +19,10 @@ public class SocietyResource {
   }
 
   @PostMapping
+  @ResponseStatus(CREATED)
   @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
-  public SocietyDto createOrUpdateSocietyInfo(@RequestBody @Valid SocietyDto data) {
-    return this.societyService.createOrUpdateSocietyInfo(data);
+  public void createSocietyInfo(@RequestBody @Valid SocietyDto data) {
+    this.societyService.createSocietyInfo(data);
   }
+
 }
