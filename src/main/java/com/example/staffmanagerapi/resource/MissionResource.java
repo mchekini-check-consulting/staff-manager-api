@@ -43,4 +43,10 @@ public class MissionResource {
         List<MissionDto> missions = missionService.missions();
         return ResponseEntity.ok(missions);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMission(@PathVariable("id") Integer missionId, @Valid @RequestBody CreateMissionInDto updateMissionDto) {
+        MissionDto missionDto = missionService.updateMission(missionId, updateMissionDto);
+        return ResponseEntity.ok(missionDto);
+    }
 }

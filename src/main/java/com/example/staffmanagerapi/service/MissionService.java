@@ -13,6 +13,8 @@ import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeMap;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -74,6 +76,30 @@ public class MissionService {
     public List<Mission> getCollaboratorMissions(Collaborator collaborator) {
         Specification<Mission> specification = Specification.where(this.filterByCollaborator(collaborator));
         return this.missionRepository.findAll(specification); 
+    }
+
+    @Transactional
+    public MissionDto updateMission(Integer missionId, CreateMissionInDto updateMissionDto) {
+        Mission mission = missionRepository.findById(missionId)
+                .orElseThrow(() -> new RuntimeException(" La Mission avec ID: " + missionId + " est introuvable"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE
+                .ofPattern("dd/MM/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+
+        mission.setNameMission(updateMissionDto.getNameMission());
+        mission.setStartingDateMission(LocalDate.parse(updateMissionDto.getStartingDateMission(), formatter));
+        mission.setEndingDateMission(LocalDate.parse(updateMissionDto.getEndingDateMission(), formatter));
+
+        if (Objects.nonNull(updateMissionDto.getCollaboratorId())) {
+            Collaborator collaborator = collaboratorRepository.getReferenceById(updateMissionDto.getCollaboratorId());
+            mission.setCollaborator(collaborator);
+            log.info("La mission a été affectée au collaborateur avec l'identifiant : " + updateMissionDto.getCollaboratorId());
+        }
+
+        missionRepository.save(mission);
+        log.info("La mission avec l'identifiant " + missionId + " a été mise à jour");
+        return convertEntityToDto(mission);
     }
 
     private MissionDto convertEntityToDto(Mission mission){
