@@ -1,6 +1,5 @@
 package com.example.staffmanagerapi.template;
 
-import com.example.staffmanagerapi.enums.ErrorsEnum;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ResponseTemplate {
 
   private Object payload;
-  private ErrorsEnum error;
+  private String error;
   private String message;
   private Map<String, String> validations;
 }
