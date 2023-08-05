@@ -83,8 +83,12 @@ public class ActivityService {
           .stream()
           .filter(missionRow -> {
             return (
-              row.getDate().isAfter(missionRow.getStartingDateMission()) &&
-              row.getDate().isBefore(missionRow.getEndingDateMission())
+              row
+                .getDate()
+                .isAfter(missionRow.getStartingDateMission().minusDays(1)) &&
+              row
+                .getDate()
+                .isBefore(missionRow.getEndingDateMission().plusDays(1))
             );
           })
           .toList();
@@ -96,7 +100,11 @@ public class ActivityService {
           .category(row.getCategory())
           .comment(row.getComment())
           .collaborator(collaborator.get())
-          .mission((activeMissions.size() > 0 && shouldAddMission(row.getCategory())) ? activeMissions.get(0) : null)
+          .mission(
+            (activeMissions.size() > 0 && shouldAddMission(row.getCategory()))
+              ? activeMissions.get(0)
+              : null
+          )
           .build();
       })
       .toList();
