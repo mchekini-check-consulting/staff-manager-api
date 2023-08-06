@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CustomerInvoiceDetail {
-
     ActivityCategoryEnum services;
     Double quantity;
     Double unitPriceExcludingVAT ;

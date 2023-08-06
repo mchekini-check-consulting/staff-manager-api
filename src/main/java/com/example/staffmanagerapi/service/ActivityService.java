@@ -31,19 +31,22 @@ public class ActivityService {
     private final MissionService missionService;
     private CollaboratorRepository collaboratorRepository;
     private SocietyRepository societyRepository;
+    private JasperReportService jasperReportService;
 
     public ActivityService(
             ActivityRepository activityRepository1,
             CollaboratorService collaboratorService1,
             MissionService missionService1,
             CollaboratorRepository collaboratorRepository,
-            SocietyRepository societyRepository
+            SocietyRepository societyRepository,
+            JasperReportService jasperReportService
     ) {
         this.activityRepository = activityRepository1;
         this.collaboratorService = collaboratorService1;
         this.missionService = missionService1;
         this.collaboratorRepository = collaboratorRepository;
         this.societyRepository = societyRepository;
+        this.jasperReportService = jasperReportService;
     }
 
     public static Double sumDaysByCategory(
@@ -224,7 +227,7 @@ public class ActivityService {
 
         Collaborator collaborator = this.collaboratorRepository.findById(collaboratorId)
                 .orElseThrow(() -> new EntityNotFoundException("Le collaborateur possédant l'ID " + collaboratorId + " n'existe pas"));
-
+        log.info("Collaborateur possedant l'ID {} existe en base, nom : {} ",collaboratorId,collaborator.getFirstName()+collaborator.getLastName());
         /**
          * Chaque key/value reference un Client + les activities associés
          */
@@ -236,14 +239,19 @@ public class ActivityService {
                 .filter(activity -> activity.getMission() != null) // old data contien des lignes ou l'activity n'a pas de mission, a filtrer
                 .collect(Collectors.groupingBy(Activity::getMission));
 
+        log.info("Traitemant d'un total de {} missions pour {} ",missionActivitiesMap.size(),collaborator.getFirstName()+collaborator.getLastName());
+        if (missionActivitiesMap.size() == 0 ){
+            log.warn("Le Collaborateur {} n'a aucune mission pendant la période {}",collaborator.getFirstName()+collaborator.getLastName(),currentMonth);
+        }
         /**
          * Step1. generer un objet CustomerInvoiceDetail, c'est le contenu du tableau,  a ajouter comme datasource a Jasper
          * Step2. generer le footer ou il y'a les totals HT et TTC , c'est un simple Map, a ajouter comme parameter a Jasper
-         * Step3. generer le report
-         * Step4. save to S3
-         * Step5. return to client ( a tester : retourner plusieurs pdfs dans la response ? )
+         * Step3. generer le report in a temp directory
+         * Step4. save to S3 and delete from temp directory
+         * Step5. return to client ( a tester : possible de retourner plusieurs pdfs dans la response ? )
          */
         missionActivitiesMap.forEach((mission, activities) -> {
+            log.info("Traitement de mission:{} qui possede {} activités ...",mission.getNameMission(),activities.size());
             /**
              * Step 1:
              */
@@ -288,6 +296,8 @@ public class ActivityService {
             /**
              * Step 2 :
              */
+            log.info("Détails facture : ",invoiceDetails);
+            log.info("Génération des parametres du raport .. ");
             List<Society> societies = this.societyRepository.findAll();
             if (societies.size() > 1) {
                 throw new MultipleSocietiesFoundException("On s'attend à ce qu'une société soit renvoyée de la base, on en a trouvé plusieurs");
@@ -295,17 +305,27 @@ public class ActivityService {
                 throw new EntityNotFoundException("Aucune Société en base, la génération de la facture client dépends du TVA de la société ainsi que d'autres informations");
             }
 
-            Double tva =  Double.valueOf(societies.get(0).getVat());
-            Double totalHT = invoiceDetails.stream()
+            var tva = Double.parseDouble(societies.get(0).getVat());
+            var totalHT = invoiceDetails.stream()
                     .mapToDouble(CustomerInvoiceDetail::getAmountexcludingVAT)
                     .sum();
             var totalTTC = totalHT * (1 + tva / 100); // totalTTC = totalHT + totalHT * ( tva / 100 )
 
-            Map<String, Double> invoiceFooter = new HashMap<>();
+            Map<String, Object> invoiceFooter = new HashMap<>();
             invoiceFooter.put("totalHT",totalHT );
             invoiceFooter.put("tva", tva);
             invoiceFooter.put("totalTTC",totalTTC );
+            /**
+             * Step 3 :
+             */
 
+            String pdfName = mission.getCustomer().getCustomerName()+"-"
+                    +currentMonth.getMonth()+"-"
+                    +currentMonth.getYear()+"-"
+                    +collaborator.getFirstName()+"-"
+                    +collaborator.getLastName();
+            log.info("Génération du pdf au nom : {}",pdfName+".pdf");
+            this.jasperReportService.generateReport("reports/customerInvoice.jrxml",invoiceDetails,invoiceFooter,pdfName);
         });
     }
 }
