@@ -44,4 +44,9 @@ public class AmazonS3Service {
                 amazonS3.listObjects(bucketName).getObjectSummaries().isEmpty();
     }
 
+    public boolean doesFileExists(String bucket, String fileName){
+        return amazonS3.doesObjectExist(bucket, fileName);
+    }
+
+
 }
