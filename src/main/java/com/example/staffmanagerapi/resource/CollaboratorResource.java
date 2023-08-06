@@ -1,5 +1,6 @@
 package com.example.staffmanagerapi.resource;
 
+import com.example.staffmanagerapi.dto.collaborator.CollaboratorDto;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.service.CollaboratorService;
 import jakarta.validation.Valid;
@@ -46,6 +47,12 @@ public class CollaboratorResource {
         return ResponseEntity.status(HttpStatusCode.valueOf(201))
                 .headers(responseHeaders)
                 .body(collaborator);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CollaboratorDto> upDateCollaborator(@Valid @RequestBody CollaboratorDto collaboratorRequest, @PathVariable Long id){
+        CollaboratorDto collaboratorDto = collaboratorService.upDateCollaborator(id,collaboratorRequest);
+        return ResponseEntity.ok().body(collaboratorDto);
     }
 
 

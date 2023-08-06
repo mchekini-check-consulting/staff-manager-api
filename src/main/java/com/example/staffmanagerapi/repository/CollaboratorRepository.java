@@ -11,4 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CollaboratorRepository extends JpaRepository<Collaborator,Long> {
     Optional<Collaborator> findByEmail(String email);
+
+    boolean existsByEmail(String Email);
+    boolean existsByPhone(String Phone);
 }
