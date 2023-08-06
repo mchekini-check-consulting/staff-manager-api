@@ -80,6 +80,39 @@ class CollaboratorIntegrationTest {
 
     }
 
+    @Test
+    void shouldUpdateCollaborator(){
+        //GIVEN
+        Collaborator collaborator = Collaborator.builder()
+                .firstName("john")
+                .lastName("doe")
+                .email("test@gmail.com")
+                .phone("0600000001")
+                .address("16 rue des palmiers 75015 Paris")
+                .build();
+        collaborator = collaboratorRepository.save(collaborator);
+
+        HttpEntity<Collaborator> requestEntity = new HttpEntity<>(Collaborator.builder()
+                .firstName("john updated")
+                .lastName("doe updated")
+                .email("test-updated-email-123@gmail.com")
+                .phone("0601020304")
+                .address("address updated")
+                .build());
+
+        //WHEN
+        ResponseEntity<Collaborator> responseEntity = restTemplate.exchange(
+                "http://localhost:" + port + "/api/v1/collaborator/"+collaborator.getId(),
+                HttpMethod.PUT,
+                requestEntity,
+                Collaborator.class
+        );
+
+        //THEN
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+    }
+
     private void initData() {
         List<Collaborator> collaborators = Lists.newArrayList();
 
