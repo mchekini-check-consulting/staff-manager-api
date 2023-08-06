@@ -1,12 +1,19 @@
 package com.example.staffmanagerapi.resource;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.paysheet.CreatePaySheetDTO;
 import com.example.staffmanagerapi.dto.paysheet.SearchPaySheetDTO;
+import com.example.staffmanagerapi.exception.BadRequestException;
+import com.example.staffmanagerapi.exception.FileNameDoesNotExistException;
 import com.example.staffmanagerapi.model.Paysheet;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.PaySheetService;
+import com.example.staffmanagerapi.validators.document.DocumentNameValid;
+import com.example.staffmanagerapi.validators.paySheet.PaySheetNameValid;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +27,7 @@ import java.util.List;
 public class PaySheetResource {
 
     private final PaySheetService paySheetService;
-    private User user;
+    private final User user;
 
     public PaySheetResource(PaySheetService paySheetService, User user) {
         this.paySheetService = paySheetService;
@@ -45,5 +52,15 @@ public class PaySheetResource {
             log.error("{}", e.getMessage());
             throw new RuntimeException();
         }
+    }
+
+
+    @GetMapping("/{documentName}")
+//    @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
+    public ResponseEntity download(@PathVariable("documentName") @PaySheetNameValid String documentName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
+        Object object = paySheetService.downloadFile(documentName);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documentName + "\"")
+                .body(object);
     }
 }

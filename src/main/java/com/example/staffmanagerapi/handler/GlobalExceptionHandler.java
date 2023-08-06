@@ -2,11 +2,8 @@ package com.example.staffmanagerapi.handler;
 
 import com.example.staffmanagerapi.enums.ErrorsEnum;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.example.staffmanagerapi.exception.BadRequestException;
-import com.example.staffmanagerapi.exception.FileEmptyException;
-import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
+import com.example.staffmanagerapi.exception.*;
 import com.example.staffmanagerapi.template.ResponseTemplate;
-import com.example.staffmanagerapi.exception.FileNameExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -156,7 +153,7 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(value = {AmazonS3Exception.class})
+    @ExceptionHandler(value = {AmazonS3Exception.class, FileNameDoesNotExistException.class})
     public ResponseEntity<ResponseTemplate> handleIOException(
             RuntimeException ex
     ) {

@@ -1,16 +1,19 @@
 package com.example.staffmanagerapi.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import com.example.staffmanagerapi.dto.paysheet.CreatePaySheetDTO;
 import com.example.staffmanagerapi.dto.paysheet.SearchPaySheetDTO;
-import com.example.staffmanagerapi.exception.FileEmptyException;
-import com.example.staffmanagerapi.exception.FileInvalidExtensionException;
-import com.example.staffmanagerapi.exception.FileNameExistsException;
+import com.example.staffmanagerapi.exception.*;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.model.Paysheet;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.PaySheetRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-
+@Slf4j
 @Service
 public class PaySheetService {
 
@@ -81,11 +84,6 @@ public class PaySheetService {
         return paySheetRepository.save(paysheet).getId();
     }
 
-    private boolean isValidFile(MultipartFile multipartFile) {
-        if (Objects.isNull(multipartFile.getOriginalFilename())) return false;
-        return !multipartFile.getOriginalFilename().trim().equals("");
-    }
-
     public List<Paysheet> search(SearchPaySheetDTO searchPaySheetDTO, User user) {
 
         Optional<Collaborator> collaboratorOptional = this.collaboratorRepository.findByEmail(user.getEmail());
@@ -129,5 +127,26 @@ public class PaySheetService {
         };
     }
 
+    public byte[] downloadFile(String documentName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
+        if (amazonS3Service.bucketNotExistOrEmpty(paysheetBucket)) {
+            throw new BadRequestException("La bucket n'existe pas ou est vide");
+        }
+        if (amazonS3Service.doesFileExists(paysheetBucket, documentName)) {
+            throw new FileNameDoesNotExistException("Cette fiche de paie n'existe pas");
+        }
+
+        final S3Object s3Object = amazonS3Service.download(paysheetBucket, documentName);
+        final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+
+        byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
+        log.info("File downloaded successfully.");
+        s3Object.close();
+        return content;
+    }
+
+    private boolean isValidFile(MultipartFile multipartFile) {
+        if (Objects.isNull(multipartFile.getOriginalFilename())) return false;
+        return !multipartFile.getOriginalFilename().trim().equals("");
+    }
 
 }
