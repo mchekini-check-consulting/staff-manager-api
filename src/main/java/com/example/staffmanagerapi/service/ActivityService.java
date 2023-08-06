@@ -292,7 +292,7 @@ public class ActivityService {
             if (societies.size() > 1) {
                 throw new MultipleSocietiesFoundException("On s'attend à ce qu'une société soit renvoyée de la base, on en a trouvé plusieurs");
             } else if (societies.isEmpty()) {
-                throw new EntityNotFoundException("Aucune Société en base, la génération de la facture client dépends du TVA de la société ainsi que d'autres informations")
+                throw new EntityNotFoundException("Aucune Société en base, la génération de la facture client dépends du TVA de la société ainsi que d'autres informations");
             }
 
             Double tva =  Double.valueOf(societies.get(0).getVat());
