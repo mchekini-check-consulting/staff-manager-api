@@ -9,7 +9,6 @@ import com.example.staffmanagerapi.exception.FileNameDoesNotExistException;
 import com.example.staffmanagerapi.model.Paysheet;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.PaySheetService;
-import com.example.staffmanagerapi.validators.document.DocumentNameValid;
 import com.example.staffmanagerapi.validators.paySheet.PaySheetNameValid;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -55,12 +54,12 @@ public class PaySheetResource {
     }
 
 
-    @GetMapping("/{documentName}")
-//    @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
-    public ResponseEntity download(@PathVariable("documentName") @PaySheetNameValid String documentName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
-        Object object = paySheetService.downloadFile(documentName);
+    @GetMapping("/{fileName}")
+    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
+    public ResponseEntity<?> download(@PathVariable("fileName") @PaySheetNameValid String fileName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
+        Object object = paySheetService.downloadFile(fileName);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documentName + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .body(object);
     }
 }

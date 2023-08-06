@@ -107,7 +107,6 @@ public class PaySheetService {
                 return criteriaBuilder.greaterThanOrEqualTo(root.get("monthYear"), searchPaySheetDTO.getStartDate());
             };
         }
-        ;
         return null;
     }
 
@@ -117,7 +116,6 @@ public class PaySheetService {
                 return criteriaBuilder.lessThanOrEqualTo(root.get("monthYear"), searchPaySheetDTO.getEndDate());
             };
         }
-        ;
         return null;
     }
 
@@ -127,19 +125,18 @@ public class PaySheetService {
         };
     }
 
-    public byte[] downloadFile(String documentName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
+    public byte[] downloadFile(String fileName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
         if (amazonS3Service.bucketNotExistOrEmpty(paysheetBucket)) {
             throw new BadRequestException("La bucket n'existe pas ou est vide");
         }
-        if (amazonS3Service.doesFileExists(paysheetBucket, documentName)) {
+        if (!amazonS3Service.doesFileExists(paysheetBucket, fileName)) {
             throw new FileNameDoesNotExistException("Cette fiche de paie n'existe pas");
         }
 
-        final S3Object s3Object = amazonS3Service.download(paysheetBucket, documentName);
+        final S3Object s3Object = amazonS3Service.download(paysheetBucket, fileName);
         final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
         byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
-        log.info("File downloaded successfully.");
         s3Object.close();
         return content;
     }
