@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+## Jasper temp folder for reports
+src/main/resources/reports/temp/
 ### STS ###
 .apt_generated
 .classpath

@@ -42,7 +42,7 @@ public class ActivityResource {
   }
 
   @PostMapping("/validate-cra/{collaboratorId}")
-  //@Authenticated(authenticated = true, hasAnyRoles = { "admin" })
+  @Authenticated(authenticated = true, hasAnyRoles = { "admin" })
   @ResponseStatus(CREATED)
   public void validerCRA(@PathVariable Long collaboratorId) {
     log.info("Tentative de validation du CRA pour le collaborateur possedant l'ID : {} ... ",collaboratorId);

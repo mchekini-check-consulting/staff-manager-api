@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -50,7 +51,14 @@ public class JasperReportService {
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             // Save pdf in classpath::resources/reports/temp/ folder
-            String tempFolderLocation = "reports/temp/";
+            String tempFolderLocation = "src/main/resources/reports/temp/";
+            File tempDirectory = new File(tempFolderLocation);
+            if (!tempDirectory.exists()) {
+                boolean created = tempDirectory.mkdirs(); // creer le dossier dans src/main/java/resources s'il existe pas
+                if (!created) {
+                    throw new JRRuntimeException("Cannot create temp directory for reports");
+                }
+            }
             String pdfLocation = tempFolderLocation+preferredPdfFileName+".pdf";
             JasperExportManager.exportReportToPdfFile(jasperPrint,pdfLocation);
             // Export report as PDF
@@ -94,7 +102,9 @@ public class JasperReportService {
 
         // Add/combine extraParameters with parameters map
         parameters.putAll(extraParameters);
-
+        if (!extraParameters.isEmpty()){
+            log.info("Les paramètres en extra ajoutés dans le report sont {} ",extraParameters);
+        }
         return parameters;
     }
 

@@ -5,20 +5,27 @@ import com.example.staffmanagerapi.dto.activity.out.CompteRenduActiviteOutDto;
 import com.example.staffmanagerapi.dto.activity.out.CustomerInvoiceDetail;
 import com.example.staffmanagerapi.enums.ActivityCategoryEnum;
 import com.example.staffmanagerapi.exception.MultipleSocietiesFoundException;
+import com.example.staffmanagerapi.exception.NoMissionFoundForCollaborator;
 import com.example.staffmanagerapi.model.*;
 import com.example.staffmanagerapi.repository.ActivityRepository;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.SocietyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.example.staffmanagerapi.utils.Constants.*;
 
@@ -32,6 +39,9 @@ public class ActivityService {
     private CollaboratorRepository collaboratorRepository;
     private SocietyRepository societyRepository;
     private JasperReportService jasperReportService;
+    private AmazonS3Service amazonS3Service;
+    @Value("${bucket.factures}")
+    private String factureBucket;
 
     public ActivityService(
             ActivityRepository activityRepository1,
@@ -39,7 +49,8 @@ public class ActivityService {
             MissionService missionService1,
             CollaboratorRepository collaboratorRepository,
             SocietyRepository societyRepository,
-            JasperReportService jasperReportService
+            JasperReportService jasperReportService,
+            AmazonS3Service amazonS3Service
     ) {
         this.activityRepository = activityRepository1;
         this.collaboratorService = collaboratorService1;
@@ -47,6 +58,7 @@ public class ActivityService {
         this.collaboratorRepository = collaboratorRepository;
         this.societyRepository = societyRepository;
         this.jasperReportService = jasperReportService;
+        this.amazonS3Service = amazonS3Service;
     }
 
     public static Double sumDaysByCategory(
@@ -227,7 +239,7 @@ public class ActivityService {
 
         Collaborator collaborator = this.collaboratorRepository.findById(collaboratorId)
                 .orElseThrow(() -> new EntityNotFoundException("Le collaborateur possédant l'ID " + collaboratorId + " n'existe pas"));
-        log.info("Collaborateur possedant l'ID {} existe en base, nom : {} ",collaboratorId,collaborator.getFirstName()+collaborator.getLastName());
+        log.info("Collaborateur possedant l'ID {} existe en base, nom : {} ", collaboratorId, collaborator.getFirstName() + collaborator.getLastName());
         /**
          * Chaque key/value reference un Client + les activities associés
          */
@@ -239,21 +251,18 @@ public class ActivityService {
                 .filter(activity -> activity.getMission() != null) // old data contien des lignes ou l'activity n'a pas de mission, a filtrer
                 .collect(Collectors.groupingBy(Activity::getMission));
 
-        log.info("Traitemant d'un total de {} missions pour {} ",missionActivitiesMap.size(),collaborator.getFirstName()+collaborator.getLastName());
-        if (missionActivitiesMap.size() == 0 ){
-            log.warn("Le Collaborateur {} n'a aucune mission pendant la période {}",collaborator.getFirstName()+collaborator.getLastName(),currentMonth);
+        log.info("Traitemant d'un total de {} missions pour {} ", missionActivitiesMap.size(), collaborator.getFirstName() + collaborator.getLastName());
+        if (missionActivitiesMap.size() == 0) {
+            String message = "Le Collaborateur " + collaborator.getFirstName() + " " + collaborator.getLastName() + " n'a aucune mission pendant la période " + currentMonth;
+            log.info(message);
+            throw new NoMissionFoundForCollaborator(message);
         }
-        /**
-         * Step1. generer un objet CustomerInvoiceDetail, c'est le contenu du tableau,  a ajouter comme datasource a Jasper
-         * Step2. generer le footer ou il y'a les totals HT et TTC , c'est un simple Map, a ajouter comme parameter a Jasper
-         * Step3. generer le report in a temp directory
-         * Step4. save to S3 and delete from temp directory
-         * Step5. return to client ( a tester : possible de retourner plusieurs pdfs dans la response ? )
-         */
+
         missionActivitiesMap.forEach((mission, activities) -> {
-            log.info("Traitement de mission:{} qui possede {} activités ...",mission.getNameMission(),activities.size());
+            log.info("Traitement de mission(s) : '{}' qui possede {} activité(s) ...", mission.getNameMission(), activities.size());
             /**
-             * Step 1:
+             * Step 1: generer un objet CustomerInvoiceDetail, c'est le contenu du tableau,
+             * a ajouter comme datasource a Jasper
              */
             Double billedDays = sumDaysByCategory(
                     activities,
@@ -294,9 +303,10 @@ public class ActivityService {
                     )
             );
             /**
-             * Step 2 :
+             * Step 2 : generer le footer ou il y'a les totals HT et TTC ,
+             * c'est un simple Map, a ajouter comme parameter a Jasper
              */
-            log.info("Détails facture : ",invoiceDetails);
+            log.info("Détails facture : {} ", invoiceDetails);
             log.info("Génération des parametres du raport .. ");
             List<Society> societies = this.societyRepository.findAll();
             if (societies.size() > 1) {
@@ -305,27 +315,116 @@ public class ActivityService {
                 throw new EntityNotFoundException("Aucune Société en base, la génération de la facture client dépends du TVA de la société ainsi que d'autres informations");
             }
 
-            var tva = Double.parseDouble(societies.get(0).getVat());
-            var totalHT = invoiceDetails.stream()
+            Double totalHT = invoiceDetails.stream()
                     .mapToDouble(CustomerInvoiceDetail::getAmountexcludingVAT)
                     .sum();
-            var totalTTC = totalHT * (1 + tva / 100); // totalTTC = totalHT + totalHT * ( tva / 100 )
+            Double montantTVA = totalHT * 0.2;
+            Double totalTTC = totalHT + montantTVA; // totalTTC = totalHT + totalHT * ( tva / 100 )
 
-            Map<String, Object> invoiceFooter = new HashMap<>();
-            invoiceFooter.put("totalHT",totalHT );
-            invoiceFooter.put("tva", tva);
-            invoiceFooter.put("totalTTC",totalTTC );
+            Map<String, Object> extraReportParams = new HashMap<>();
+            extraReportParams.put("totalHT", totalHT);
+            extraReportParams.put("tva", montantTVA);
+            extraReportParams.put("totalTTC", totalTTC);
+
+            // client details :
+            extraReportParams.put("customer-name", mission.getCustomer().getCustomerName());
+            extraReportParams.put("customer-adress", mission.getCustomer().getCustomerAddress());
             /**
-             * Step 3 :
+             * Step 3 : generer le report in a temp directory
              */
-
-            String pdfName = mission.getCustomer().getCustomerName()+"-"
-                    +currentMonth.getMonth()+"-"
-                    +currentMonth.getYear()+"-"
-                    +collaborator.getFirstName()+"-"
-                    +collaborator.getLastName();
-            log.info("Génération du pdf au nom : {}",pdfName+".pdf");
-            this.jasperReportService.generateReport("reports/customerInvoice.jrxml",invoiceDetails,invoiceFooter,pdfName);
+            String pdfName = mission.getCustomer().getCustomerName().replace(" ", "_") + "-"
+                    + currentMonth.getMonthValue() + "-"
+                    + currentMonth.getYear() + "-"
+                    + collaborator.getFirstName().replace(" ", "_") + "-"
+                    + collaborator.getLastName().replace(" ", "_");
+            String pdfReportName = pdfName + ".pdf";
+            log.info("Génération du rapport pdf au nom : {}", pdfReportName);
+            byte[] pdfBytes =  this.jasperReportService.generateReport("reports/customerInvoice.jrxml", invoiceDetails, extraReportParams, pdfName);
+            /**
+             * Step 4 : save to S3 and delete from temp directory
+             */
+            log.info("Tentative de upload le rapport {} a S3", pdfReportName);
+            try {
+                uploadFromByteArray(factureBucket,pdfBytes , pdfReportName);
+            } catch (IOException e) {
+                throw new EntityNotFoundException("Erreur lors de génération du rapport " + pdfReportName);
+            }
+            log.info("Rapport chargé a S3 avec success !");
+            viderJasperTempDirectory();
         });
+    }
+
+    public void viderJasperTempDirectory(){
+        log.info("Suppression des fichiers du dossier temp ...");
+        String directoryPath = "src/main/resources/reports/temp/";
+        File directory = new File(directoryPath);
+
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        file.delete();
+                        log.info("Fichier supprimé :  " + file.getName());
+                    }
+                }
+            } else {
+                log.info("Dossier Jasper Temp est vide, rien a supprimer");
+            }
+        } else {
+            log.info("Le dossier n'existe pas, ou ce n'est pas un dossier");
+        }
+    }
+
+    public void uploadFromByteArray(String bucketName, byte[] byteArray, String s3FileName) throws IOException {
+        InputStream inputStream = new ByteArrayInputStream(byteArray);
+
+        MultipartFile multipartFile = new MultipartFile() {
+            @Override
+            public String getName() {
+                return s3FileName;
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return s3FileName;
+            }
+
+            @Override
+            public String getContentType() {
+                return "application/pdf";
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                try {
+                    return inputStream.available();
+                } catch (IOException e) {
+                    return 0;
+                }
+            }
+
+            @Override
+            public byte[] getBytes() throws IOException {
+                return inputStream.readAllBytes();
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return inputStream;
+            }
+
+            @Override
+            public void transferTo(java.io.File dest) throws IOException, IllegalStateException {
+            }
+        };
+
+        this.amazonS3Service.upload(multipartFile, bucketName, s3FileName);
     }
 }

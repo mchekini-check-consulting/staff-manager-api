@@ -4,12 +4,20 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
-
+#  jpa:
+#    hibernate:
+#      ddl-auto: validate
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
 
 bucket:
   justificatifs: int-justificatifs-check-consulting
   fiche-de-paie: int-fiche-de-paie-check-consulting
   factures: int-factures-check-consulting
 
-
-
+#logging:
+#  level:
+#    org.hibernate.orm.jdbc.bind: TRACE
+#    org.hibernate.sql: DEBUG
