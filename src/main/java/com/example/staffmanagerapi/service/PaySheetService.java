@@ -1,7 +1,6 @@
 package com.example.staffmanagerapi.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
@@ -140,27 +139,6 @@ public class PaySheetService {
         byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
         s3Object.close();
         return content;
-
-
-//        if (amazonS3Service.bucketNotExistOrEmpty(bucketPaysheet)) {
-//            throw new BadRequestException("la bucket n'existe pas ou est vide");
-//        }
-//        try {
-//
-//            final S3Object s3Object = amazonS3Service.download(bucketPaysheet, fileName);
-//            final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
-//
-//            byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
-//            log.info("File downloaded successfully.");
-//            s3Object.close();
-//            return content;
-//        } catch (AmazonS3Exception e) {
-//            log.error("Error Message= " + e.getMessage());
-//            throw new NotFoundException(e.getMessage());
-//        } catch (final Exception ex) {
-//            log.error("Error Message= " + ex.getMessage());
-//            throw new BadRequestException(ex.getMessage());
-//        }
     }
 
     private boolean isValidFile(MultipartFile multipartFile) {
