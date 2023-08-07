@@ -1,6 +1,7 @@
 package com.example.staffmanagerapi.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
@@ -34,7 +35,7 @@ public class PaySheetService {
     private final CollaboratorRepository collaboratorRepository;
     private final AmazonS3Service amazonS3Service;
     @Value("${bucket.fiche-de-paie}")
-    private String paysheetBucket;
+    private String bucketPaysheet;
 
     public PaySheetService(PaySheetRepository paySheetRepository, CollaboratorRepository collaboratorRepository, AmazonS3Service amazonS3Service) {
         this.paySheetRepository = paySheetRepository;
@@ -73,7 +74,7 @@ public class PaySheetService {
         }
 
         // Uploading file to s3s
-        amazonS3Service.upload(fileContent, paysheetBucket, name);
+        amazonS3Service.upload(fileContent, bucketPaysheet, name);
 
         Paysheet paysheet = Paysheet.builder()
                 .collaborator(collaborator)
@@ -125,20 +126,41 @@ public class PaySheetService {
         };
     }
 
-    public byte[] downloadFile(String fileName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
-        if (amazonS3Service.bucketNotExistOrEmpty(paysheetBucket)) {
+    public byte[] downloadFile(String fileName) throws IOException, AmazonS3Exception, BadRequestException, FileNameDoesNotExistException  {
+        if (amazonS3Service.bucketNotExistOrEmpty(bucketPaysheet)) {
             throw new BadRequestException("La bucket n'existe pas ou est vide");
         }
-        if (!amazonS3Service.doesFileExists(paysheetBucket, fileName)) {
+        if (!amazonS3Service.doesFileExists(bucketPaysheet, fileName)) {
             throw new FileNameDoesNotExistException("Cette fiche de paie n'existe pas");
         }
 
-        final S3Object s3Object = amazonS3Service.download(paysheetBucket, fileName);
+        final S3Object s3Object = amazonS3Service.download(bucketPaysheet, fileName);
         final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
         byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
         s3Object.close();
         return content;
+
+
+//        if (amazonS3Service.bucketNotExistOrEmpty(bucketPaysheet)) {
+//            throw new BadRequestException("la bucket n'existe pas ou est vide");
+//        }
+//        try {
+//
+//            final S3Object s3Object = amazonS3Service.download(bucketPaysheet, fileName);
+//            final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+//
+//            byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
+//            log.info("File downloaded successfully.");
+//            s3Object.close();
+//            return content;
+//        } catch (AmazonS3Exception e) {
+//            log.error("Error Message= " + e.getMessage());
+//            throw new NotFoundException(e.getMessage());
+//        } catch (final Exception ex) {
+//            log.error("Error Message= " + ex.getMessage());
+//            throw new BadRequestException(ex.getMessage());
+//        }
     }
 
     private boolean isValidFile(MultipartFile multipartFile) {

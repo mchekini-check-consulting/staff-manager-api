@@ -1,7 +1,6 @@
 package com.example.staffmanagerapi.resource;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.paysheet.CreatePaySheetDTO;
 import com.example.staffmanagerapi.dto.paysheet.SearchPaySheetDTO;
 import com.example.staffmanagerapi.exception.BadRequestException;
@@ -9,7 +8,6 @@ import com.example.staffmanagerapi.exception.FileNameDoesNotExistException;
 import com.example.staffmanagerapi.model.Paysheet;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.service.PaySheetService;
-import com.example.staffmanagerapi.validators.paySheet.PaySheetNameValid;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -55,8 +53,8 @@ public class PaySheetResource {
 
 
     @GetMapping("/{fileName}")
-    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
-    public ResponseEntity<?> download(@PathVariable("fileName") @PaySheetNameValid String fileName) throws AmazonS3Exception, BadRequestException, FileNameDoesNotExistException, IOException {
+//    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
+    public ResponseEntity<?> download(@PathVariable("fileName") String fileName) throws IOException, AmazonS3Exception, BadRequestException, FileNameDoesNotExistException {
         Object object = paySheetService.downloadFile(fileName);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
