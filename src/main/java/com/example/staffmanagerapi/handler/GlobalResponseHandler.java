@@ -34,8 +34,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice {
 
         int responseStatus = ((ServletServerHttpResponse) response).getServletResponse().getStatus();
 
+        if (responseStatus >= 200 && responseStatus < 300 && !GLOBAL_RESPONSE_IGNORE_PATHS.contains(requestPath) && body != null
+        && !"application/octet-stream".equals(selectedContentType.toString())) {
 
-        if (responseStatus >= 200 && responseStatus < 300 && !GLOBAL_RESPONSE_IGNORE_PATHS.contains(requestPath) && body != null) {
             return ResponseTemplate.builder().payload(body).build();
         }
 
