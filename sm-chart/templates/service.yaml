@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: staff-manager-api
+  namespace: staff-manager
+spec:
+  selector:
+      app: sm-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+
+

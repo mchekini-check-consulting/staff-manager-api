@@ -9,5 +9,6 @@ WORKDIR /opt
 ADD target/staff-manager-api-*.jar staff-manager-api.jar
 ADD script.sh /script.sh
 RUN chmod 777 /script.sh
+RUN sed -i -e 's/\r$//' /script.sh
 EXPOSE 8080
 ENTRYPOINT ["/script.sh"]

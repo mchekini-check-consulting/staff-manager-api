@@ -1,0 +1,22 @@
+node("ci-node") {
+
+
+    stage("checkout") {
+        checkout scmGit(branches: [[name: "kube"]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mchekini-check-consulting/staff-manager-api.git']])
+
+    }
+
+    stage("deploy to cluster") {
+
+        withCredentials([[$class       : 'AmazonWebServicesCredentialsBinding',
+                          credentialsId: "aws-user",
+                         ]]) {
+            sh "aws eks update-kubeconfig --region us-east-2 --name sm-cluster"
+            sh "helm upgrade sm-api sm-chart --install --create-namespace --namespace staff-manager"
+        }
+
+
+    }
+
+
+}

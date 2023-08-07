@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sm-api
+  namespace: staff-manager
+  labels:
+    app: sm-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sm-api
+  template:
+    metadata:
+      labels:
+        app: sm-api
+    spec:
+      serviceAccountName: sm-api
+      containers:
+        - name: sm-api
+          imagePullPolicy: Always
+          image: mchekini/sm-api:develop
+          ports:
+            - containerPort: 8080
+{{/*          livenessProbe:*/}}
+{{/*            httpGet:*/}}
+{{/*              path: /api/v1/health*/}}
+{{/*              port: 8080*/}}
+{{/*            initialDelaySeconds: 20*/}}
+{{/*            successThreshold: 1*/}}
+{{/*            failureThreshold: 5*/}}
+{{/*            periodSeconds: 10*/}}
+{{/*          readinessProbe:*/}}
+{{/*            httpGet:*/}}
+{{/*              path: /api/v1/health*/}}
+{{/*              port: 8080*/}}
+{{/*            initialDelaySeconds: 20*/}}
+{{/*            successThreshold: 1*/}}
+{{/*            failureThreshold: 5*/}}
+{{/*            periodSeconds: 10*/}}
