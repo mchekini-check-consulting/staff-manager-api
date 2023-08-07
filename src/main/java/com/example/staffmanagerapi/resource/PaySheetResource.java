@@ -1,6 +1,7 @@
 package com.example.staffmanagerapi.resource;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.paysheet.CreatePaySheetDTO;
 import com.example.staffmanagerapi.dto.paysheet.SearchPaySheetDTO;
 import com.example.staffmanagerapi.exception.BadRequestException;
@@ -53,7 +54,7 @@ public class PaySheetResource {
 
 
     @GetMapping("/{fileName}")
-//    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
+    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
     public ResponseEntity<?> download(@PathVariable("fileName") String fileName) throws IOException, AmazonS3Exception, BadRequestException, FileNameDoesNotExistException {
         Object object = paySheetService.downloadFile(fileName);
         return ResponseEntity.ok()
