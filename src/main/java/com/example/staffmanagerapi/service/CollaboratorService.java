@@ -5,13 +5,20 @@ import com.example.staffmanagerapi.dto.collaborator.CollaboratorDto;
 import com.example.staffmanagerapi.exception.BadRequestException;
 import com.example.staffmanagerapi.model.Collaborator;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 public class CollaboratorService {
@@ -42,25 +49,30 @@ public class CollaboratorService {
     public CollaboratorDto upDateCollaborator(Long id, CollaboratorDto collaboratorRequest) {
 
         Collaborator collaborator = collaboratorRepository.findById(id).orElseThrow( ()->new EntityNotFoundException("le collaborateur n'exsite pas"));
+        Map<String, String> errorMessages = new HashMap<>();
         
         String newEmail = collaboratorRequest.getEmail();
         String newPhone = collaboratorRequest.getPhone();
 
-        collaborator.setFirstName(collaboratorRequest.getFirstName());
-        collaborator.setLastName(collaboratorRequest.getLastName());
-
-
         if(! collaborator.getEmail().equals(newEmail)){
-            if( collaboratorRepository.existsByEmail(newEmail)) throw new BadRequestException("l'email existe dèjâ");
-            collaborator.setEmail(newEmail);
+            if( collaboratorRepository.existsByEmail(newEmail)) errorMessages.put("email","l'email existe dèjâ");
         }
 
         if(! collaborator.getPhone().equals(newPhone)){
-            if(collaboratorRepository.existsByPhone(newPhone)) throw new BadRequestException("le numéro de téléphone existe dèjâ");
-            collaborator.setPhone(newPhone);
+            if(collaboratorRepository.existsByPhone(newPhone)) errorMessages.put("phone","le numéro de téléphone existe dèjâ");
+        }
+        if(!errorMessages.isEmpty()) {
+            throw new BadRequestException(
+                    errorMessages.keySet().stream().map(key->errorMessages.get(key)).collect(Collectors.joining(", "))
+            );
         }
 
+        collaborator.setFirstName(collaboratorRequest.getFirstName());
+        collaborator.setLastName(collaboratorRequest.getLastName());
+        collaborator.setEmail(newEmail);
+        collaborator.setPhone(newPhone);
         collaborator.setAddress(collaboratorRequest.getAddress());
+
         Collaborator updatedCollaborator = collaboratorRepository.save(collaborator);
         return modelMapper.map(updatedCollaborator,CollaboratorDto.class);
 
