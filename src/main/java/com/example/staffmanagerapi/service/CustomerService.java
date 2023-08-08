@@ -4,14 +4,13 @@ import com.example.staffmanagerapi.dto.CustomerCreationDto;
 import com.example.staffmanagerapi.dto.customer.CustomerDto;
 import com.example.staffmanagerapi.dto.customer.CustomerUpdateInputDto;
 import com.example.staffmanagerapi.exception.BadRequestException;
+import com.example.staffmanagerapi.mapper.CustomerMapper;
 import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.repository.CustomerRepository;
 import java.util.List;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -20,32 +19,32 @@ import org.springframework.stereotype.Component;
 public class CustomerService {
 
   private final CustomerRepository customerRepository;
-  private final ModelMapper modelMapper;
+  private final CustomerMapper customerMapper;
 
   public CustomerService(
     CustomerRepository customerRepository,
-    ModelMapper modelMapper
+    CustomerMapper customerMapper
   ) {
     this.customerRepository = customerRepository;
-    this.modelMapper = modelMapper;
+    this.customerMapper = customerMapper;
   }
 
   public void add(CustomerCreationDto customerDto) {
-    Customer customerEntity = modelMapper.map(customerDto, Customer.class);
+    Customer customerEntity =
+      this.customerMapper.customerCreationDtoToCustomer(customerDto);
     customerRepository.save(customerEntity);
   }
 
   public List<CustomerDto> getCustomers() {
-    List<Customer> customers = this.customerRepository.findAll(Sort.by(Sort.Direction.DESC, "customerId"));
+    List<Customer> customers =
+      this.customerRepository.findAll(
+          Sort.by(Sort.Direction.DESC, "customerId")
+        );
 
-    modelMapper
-      .typeMap(Customer.class, CustomerDto.class)
-      .addMapping(Customer::getCustomerId, CustomerDto::setId);
-
-    List<CustomerDto> parsedCustomers = modelMapper.map(
-      customers,
-      new TypeToken<List<CustomerDto>>() {}.getType()
-    );
+    List<CustomerDto> parsedCustomers = customers
+      .stream()
+      .map(customer -> this.customerMapper.customerToCustomerDto(customer))
+      .toList();
 
     return parsedCustomers;
   }

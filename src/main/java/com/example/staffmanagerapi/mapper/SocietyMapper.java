@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface SocietyMapper {
-
-    SocietyDto societyToSocietyDto(Society society);
+  SocietyDto societyToSocietyDto(Society society);
+  Society societyDtoToSociety(SocietyDto society);
 }
