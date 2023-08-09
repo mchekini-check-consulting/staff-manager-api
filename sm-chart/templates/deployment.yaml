@@ -24,11 +24,11 @@ spec:
             - containerPort: 8080
           env:
             - name: AWS_ACCESS_KEY_ID
-              value: "AKIAS7WDEOQ4EJUQXRA4"
+              value: "AKIAS7WDEOQ4IJEOYB67"
             - name: AWS_DEFAULT_REGION
               value: "us-east-2"
             - name: AWS_SECRET_ACCESS_KEY
-              value: "lrPBp5TL6Jwgvysl241yNDpwmUnHLYrTS/SU67Od"
+              value: "DUd3Q+F3vWtmH3OspGKYlZ75+F7mTIJarwAUj9kC"
 {{/*          livenessProbe:*/}}
 {{/*            httpGet:*/}}
 {{/*              path: /api/v1/health*/}}
