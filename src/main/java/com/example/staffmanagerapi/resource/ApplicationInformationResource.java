@@ -17,6 +17,9 @@ public class ApplicationInformationResource {
     @Value("${kubeVersion}")
     private String kubeVersion;
 
+    @Value("${POD_NAME}")
+    private String podName;
+
     public ApplicationInformationResource(AppInformation appInformation) {
         this.appInformation = appInformation;
     }
@@ -24,11 +27,12 @@ public class ApplicationInformationResource {
 
     @GetMapping("details")
     public AppInformation getAppInformations() {
-        log.info("application name = {}, version = {}", appInformation.getName(), appInformation.getVersion());
+        log.info("application name = {}, version = {}, podName = {}", appInformation.getName(), appInformation.getVersion(), podName);
         return AppInformation.builder()
                 .version(appInformation.getVersion())
                 .name(appInformation.getName())
                 .kubeVersion(kubeVersion)
+                .podName(podName)
                 .build();
     }
 

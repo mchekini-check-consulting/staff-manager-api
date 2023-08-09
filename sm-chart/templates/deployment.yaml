@@ -31,6 +31,10 @@ spec:
               value: "DUd3Q+F3vWtmH3OspGKYlZ75+F7mTIJarwAUj9kC"
             - name: kubeVersion
               value: "2.0.0"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           livenessProbe:
             httpGet:
               path: /api/v1/health
