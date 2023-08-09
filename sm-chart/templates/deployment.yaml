@@ -16,6 +16,12 @@ spec:
         app: sm-api
     spec:
 {{/*      serviceAccountName: sm-api*/}}
+      initContainers:
+        - name: mahdi
+          image: ubuntu
+          command:
+            - sleep
+            - "60"
       containers:
         - name: sm-api
           imagePullPolicy: Always
