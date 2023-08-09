@@ -34,6 +34,9 @@ spec:
           livenessProbe:
             httpGet:
               path: /api/v1/health
+              httpHeaders:
+                - name: header1
+                  value: "sm-header"
               port: 8080
             initialDelaySeconds: 20
             successThreshold: 1
