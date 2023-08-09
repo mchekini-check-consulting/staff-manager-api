@@ -50,5 +50,10 @@ public class Constants {
     public static final Set<ActivityCategoryEnum> RTT_REDEMPTION_DAYS_CATEGORIES = EnumSet.of(
             ActivityCategoryEnum.RACHAT_RTT
     );
-
+    //------------------------------------------------------------------------------------------------
+    // Prix des prestations : génération automatique des factures ( en EURO £ )
+    //------------------------------------------------------------------------------------------------
+    public static final Double PRIX_UNITAIRE_JOUR_TRAVAILLE = 100.0;
+    public static final Double PRIX_UNITAIRE_HEURES_SUP = 120.0;
+    public static final Double PRIX_UNITAIRE_ASTREINTES = 150.0;
 }
