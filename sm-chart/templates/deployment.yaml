@@ -29,6 +29,8 @@ spec:
               value: "us-east-2"
             - name: AWS_SECRET_ACCESS_KEY
               value: "DUd3Q+F3vWtmH3OspGKYlZ75+F7mTIJarwAUj9kC"
+            - name: kubeVersion
+              value: "1.0.0"
 {{/*          livenessProbe:*/}}
 {{/*            httpGet:*/}}
 {{/*              path: /api/v1/health*/}}
