@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class HealthCheckResource {
 
-    @GetMapping("health")
+    @GetMapping
     public ResponseEntity healthCheck(@RequestHeader("header1") String headerValue) {
 
 

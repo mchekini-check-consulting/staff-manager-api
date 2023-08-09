@@ -2,6 +2,7 @@ package com.example.staffmanagerapi.resource;
 
 import com.example.staffmanagerapi.model.AppInformation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,8 @@ public class ApplicationInformationResource {
 
 
     private final AppInformation appInformation;
+    @Value("${kubeVersion}")
+    private String kubeVersion;
 
     public ApplicationInformationResource(AppInformation appInformation) {
         this.appInformation = appInformation;
@@ -25,6 +28,7 @@ public class ApplicationInformationResource {
         return AppInformation.builder()
                 .version(appInformation.getVersion())
                 .name(appInformation.getName())
+                .kubeVersion(kubeVersion)
                 .build();
     }
 
