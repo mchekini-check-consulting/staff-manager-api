@@ -31,19 +31,19 @@ spec:
               value: "DUd3Q+F3vWtmH3OspGKYlZ75+F7mTIJarwAUj9kC"
             - name: kubeVersion
               value: "1.0.0"
-{{/*          livenessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /api/v1/health*/}}
-{{/*              port: 8080*/}}
-{{/*            initialDelaySeconds: 20*/}}
-{{/*            successThreshold: 1*/}}
-{{/*            failureThreshold: 5*/}}
-{{/*            periodSeconds: 10*/}}
-{{/*          readinessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /api/v1/health*/}}
-{{/*              port: 8080*/}}
-{{/*            initialDelaySeconds: 20*/}}
-{{/*            successThreshold: 1*/}}
-{{/*            failureThreshold: 5*/}}
-{{/*            periodSeconds: 10*/}}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
