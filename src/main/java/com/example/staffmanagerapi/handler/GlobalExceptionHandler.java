@@ -6,6 +6,8 @@ import com.example.staffmanagerapi.exception.*;
 import com.example.staffmanagerapi.template.ResponseTemplate;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(EntityNotFoundException.class)
@@ -27,7 +30,7 @@ public class GlobalExceptionHandler {
     EntityNotFoundException ex
   ) {
     return ResponseEntity
-      .status(HttpStatus.NOT_ACCEPTABLE)
+      .status(HttpStatus.NOT_FOUND)
       .body(
         ResponseTemplate
           .builder()
@@ -167,4 +170,49 @@ public class GlobalExceptionHandler {
                                 .build()
                 );
     }
+
+    @ExceptionHandler(value = {MultipleSocietiesFoundException.class})
+    public ResponseEntity<ResponseTemplate> handleMultipleResultsReturnedWhenOnlyOneIsExpected(
+            MultipleSocietiesFoundException ex
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ResponseTemplate
+                                .builder()
+                                .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(value = {NoMissionFoundForCollaborator.class})
+    public ResponseEntity<ResponseTemplate> handleNoMissionFoundForCollaborator(
+            RuntimeException ex
+    ) {
+      return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ResponseTemplate
+                                .builder()
+                                .error(ErrorsEnum.ENTITY_NOT_FOUND.toString())
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
+  @ExceptionHandler(value = {JRRuntimeException.class})
+  public ResponseEntity<ResponseTemplate> handleJRRuntimeException(
+          RuntimeException ex
+  ) {
+    String message = ex.getMessage() == null ? "Error de generation d'un Jasper report PDF " : ex.getMessage();
+    return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(
+                    ResponseTemplate
+                            .builder()
+                            .error(ErrorsEnum.RUNTIME_EXCEPTION.toString())
+                            .message(message)
+                            .build()
+            );
+  }
 }

@@ -5,11 +5,8 @@ spring:
     password: postgres
     driverClassName: org.postgresql.Driver
 
-
 bucket:
   justificatifs: int-justificatifs-check-consulting
   fiche-de-paie: int-fiche-de-paie-check-consulting
   factures: int-factures-check-consulting
-
-
 
