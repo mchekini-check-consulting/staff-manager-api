@@ -15,7 +15,7 @@ spec:
       labels:
         app: sm-api
     spec:
-      serviceAccountName: sm-api
+{{/*      serviceAccountName: sm-api*/}}
       containers:
         - name: sm-api
           imagePullPolicy: Always
