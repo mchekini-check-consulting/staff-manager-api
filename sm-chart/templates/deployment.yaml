@@ -22,19 +22,19 @@ spec:
           image: mchekini/sm-api:develop
           ports:
             - containerPort: 8080
-{{/*          livenessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /api/v1/health*/}}
-{{/*              port: 8080*/}}
-{{/*            initialDelaySeconds: 20*/}}
-{{/*            successThreshold: 1*/}}
-{{/*            failureThreshold: 5*/}}
-{{/*            periodSeconds: 10*/}}
-{{/*          readinessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /api/v1/health*/}}
-{{/*              port: 8080*/}}
-{{/*            initialDelaySeconds: 20*/}}
-{{/*            successThreshold: 1*/}}
-{{/*            failureThreshold: 5*/}}
-{{/*            periodSeconds: 10*/}}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 20
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 20
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 10
