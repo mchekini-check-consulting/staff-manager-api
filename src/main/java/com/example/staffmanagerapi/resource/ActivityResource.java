@@ -46,7 +46,7 @@ public class ActivityResource {
   @ResponseStatus(CREATED)
   public void validerCRA(@PathVariable Long collaboratorId) {
     log.info("Tentative de validation du CRA pour le collaborateur possedant l'ID : {} ... ",collaboratorId);
-    this.activityService.validerCRA(collaboratorId);
+    this.activityService.validerCRAAndGenerateInvoice(collaboratorId);
   }
 
 }

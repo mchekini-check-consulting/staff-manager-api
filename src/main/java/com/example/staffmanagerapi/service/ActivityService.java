@@ -9,11 +9,11 @@ import com.example.staffmanagerapi.exception.NoMissionFoundForCollaborator;
 import com.example.staffmanagerapi.model.*;
 import com.example.staffmanagerapi.repository.ActivityRepository;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
+import com.example.staffmanagerapi.repository.InvoiceRepository;
 import com.example.staffmanagerapi.repository.SocietyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,10 +37,12 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final CollaboratorService collaboratorService;
     private final MissionService missionService;
-    private CollaboratorRepository collaboratorRepository;
-    private SocietyRepository societyRepository;
-    private JasperReportService jasperReportService;
-    private AmazonS3Service amazonS3Service;
+    private final CollaboratorRepository collaboratorRepository;
+    private final SocietyRepository societyRepository;
+    private final JasperReportService jasperReportService;
+    private final AmazonS3Service amazonS3Service;
+    private final InvoiceRepository invoiceRepository;
+
     @Value("${bucket.factures}")
     private String factureBucket;
 
@@ -50,8 +53,8 @@ public class ActivityService {
             CollaboratorRepository collaboratorRepository,
             SocietyRepository societyRepository,
             JasperReportService jasperReportService,
-            AmazonS3Service amazonS3Service
-    ) {
+            AmazonS3Service amazonS3Service,
+            InvoiceRepository invoiceRepository) {
         this.activityRepository = activityRepository1;
         this.collaboratorService = collaboratorService1;
         this.missionService = missionService1;
@@ -59,6 +62,7 @@ public class ActivityService {
         this.societyRepository = societyRepository;
         this.jasperReportService = jasperReportService;
         this.amazonS3Service = amazonS3Service;
+        this.invoiceRepository = invoiceRepository;
     }
 
     public static Double sumDaysByCategory(
@@ -235,7 +239,7 @@ public class ActivityService {
         return false;
     }
 
-    public void validerCRA(Long collaboratorId) {
+    public void validerCRAAndGenerateInvoice(Long collaboratorId) {
 
         Collaborator collaborator = this.collaboratorRepository.findById(collaboratorId)
                 .orElseThrow(() -> new EntityNotFoundException("Le collaborateur possédant l'ID " + collaboratorId + " n'existe pas"));
@@ -340,18 +344,32 @@ public class ActivityService {
             String pdfReportName = pdfName + ".pdf";
             log.info("Génération du rapport pdf au nom : {}", pdfReportName);
             byte[] pdfBytes =  this.jasperReportService.generateReport("reports/customerInvoice.jrxml", invoiceDetails, extraReportParams, pdfName);
-            /**
-             * Step 4 : save to S3 and delete from temp directory
-             */
-            log.info("Tentative de upload le rapport {} a S3", pdfReportName);
-            try {
-                uploadFromByteArray(factureBucket,pdfBytes , pdfReportName);
-            } catch (IOException e) {
-                throw new EntityNotFoundException("Erreur lors de génération du rapport " + pdfReportName);
-            }
-            log.info("Rapport chargé a S3 avec success !");
-            viderJasperTempDirectory();
+
+            saveInvoiceInDatabase(currentMonth, mission, pdfReportName);
+            saveToS3AndDeleteFromDirectory(pdfReportName, pdfBytes);
         });
+    }
+
+    private void saveInvoiceInDatabase(YearMonth currentMonth, Mission mission, String pdfReportName) {
+        Invoice invoice = Invoice.builder()
+                .name(pdfReportName)
+                .createdAt(LocalDate.now())
+                .customer(mission.getCustomer())
+                .collaborator(mission.getCollaborator())
+                .monthYear(currentMonth.atDay(1))
+                .build();
+        invoiceRepository.save(invoice);
+    }
+
+    private void saveToS3AndDeleteFromDirectory(String pdfReportName, byte[] pdfBytes) {
+        log.info("Tentative de upload le rapport {} a S3", pdfReportName);
+        try {
+            uploadFromByteArray(factureBucket, pdfBytes, pdfReportName);
+        } catch (IOException e) {
+            throw new EntityNotFoundException("Erreur lors de génération du rapport " + pdfReportName);
+        }
+        log.info("Rapport chargé a S3 avec success !");
+        viderJasperTempDirectory();
     }
 
     public void viderJasperTempDirectory(){
