@@ -22,6 +22,6 @@ spec:
           valueFrom:
             secretKeyRef:
               name: aws-secret-key
-              key: aws_secret_key
+              key: aws-secret-key
       imagePullPolicy: Always
   restartPolicy: Always
