@@ -15,7 +15,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: aws-access-key
-              key: aws-access-key
+              key: aws_sercet_key
         - name: AWS_DEFAULT_REGION
           value: "us-east-2"
         - name: AWS_SECRET_ACCESS_KEY
