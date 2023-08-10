@@ -33,23 +33,19 @@ public class PaySheetResource {
     }
 
     @PostMapping()
+    @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
     public ResponseEntity<?> upload(@ModelAttribute @Valid CreatePaySheetDTO paysheet) throws IOException {
         Integer created = paySheetService.uploadFile(paysheet);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PostMapping("/search")
+    @Authenticated(authenticated = true, hasAnyRoles = {"collab"})
     public ResponseEntity<?> recherche(@RequestBody @Valid SearchPaySheetDTO searchPaySheetDTO) throws IOException {
-        try {
-            log.info("Tentative de recherche des fiches de paie du collaborateur {} ... ", user.getEmail());
-            List<Paysheet> response = paySheetService.search(searchPaySheetDTO, user);
-            log.info("Recherche des fiches de paie du collaborateur {} effectué avec success, n°fiches : {} ", user.getEmail(), response.size());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Erreur lors de la recherches des fiches de paie de l'utilisateur {}", user.getEmail());
-            log.error("{}", e.getMessage());
-            throw new RuntimeException();
-        }
+        log.info("Tentative de recherche des fiches de paie du collaborateur {} ... ", user.getEmail());
+        List<Paysheet> response = paySheetService.search(searchPaySheetDTO, user);
+        log.info("Recherche des fiches de paie du collaborateur {} effectué avec success, n°fiches : {} ", user.getEmail(), response.size());
+        return ResponseEntity.ok(response);
     }
 
 

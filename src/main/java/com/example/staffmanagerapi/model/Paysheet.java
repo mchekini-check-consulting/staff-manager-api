@@ -21,6 +21,12 @@ public class Paysheet {
     @Column(name = "month_year", nullable = false)
     private String monthYear;
 
+    @Column(name = "month", nullable = false)
+    private Integer month;
+
+    @Column(name = "year", nullable = false)
+    private Integer year;
+
     @Column(name = "name", nullable = false)
     private String name;
 
