@@ -5,16 +5,10 @@ metadata:
   labels:
     app: my-first-pod
 spec:
-  initContainers:
-    - name: my-init-container
-      image: ubuntu
-      command:
-        - sleep
-        - "10"
   containers:
     - name: my-first-pod
-      image: nginx
+      image: mchekini/sm:1.0
       ports:
-        - containerPort: 80
+        - containerPort: 8080
       imagePullPolicy: Always
   restartPolicy: Always
