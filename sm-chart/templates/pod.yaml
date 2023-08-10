@@ -29,6 +29,9 @@ spec:
         httpGet:
           port: 8080
           path: /api/v1/health
+          httpHeaders:
+            - name: header1
+              value: neymar
         failureThreshold: 2
         successThreshold: 1
         periodSeconds: 10
