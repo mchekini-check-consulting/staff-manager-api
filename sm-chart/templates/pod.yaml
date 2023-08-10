@@ -8,9 +8,9 @@ spec:
   initContainers:
     - name: my-init-container
       image: nginx
-      ports:
-        - containerPort: 81
-      imagePullPolicy: Always
+      command:
+        - sleep
+        - "10"
   containers:
     - name: my-first-pod
       image: nginx
