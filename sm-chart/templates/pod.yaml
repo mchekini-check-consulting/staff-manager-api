@@ -10,3 +10,17 @@ spec:
     - name: sm-api
       image: mchekini/sm-api:1.0
       imagePullPolicy: Always
+      env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-access-key
+              key: aws-access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret-key
+              key: aws-secret-key
+        - name: AWS_DEFAULT_REGION
+          value: "us-east-2"
+
