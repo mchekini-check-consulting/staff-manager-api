@@ -15,6 +15,12 @@ spec:
       labels:
         app: sm-api
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                topologyKey: topology.kubernetes.io/zone
+              weight: 100
       containers:
         - name: sm-api
           image: mchekini/sm-api:1.0
