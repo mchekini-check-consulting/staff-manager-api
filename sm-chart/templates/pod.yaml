@@ -9,7 +9,29 @@ spec:
   containers:
     - name: sm-api
       image: mchekini/sm-api:1.0
+      ports:
+        - containerPort: 8080
       imagePullPolicy: Always
+      startupProbe:
+        httpGet:
+          port: 8080
+          path: /api/v1/health
+        failureThreshold: 12
+        periodSeconds: 10
+      livenessProbe:
+        httpGet:
+          port: 8080
+          path: /api/v1/health
+        failureThreshold: 2
+        successThreshold: 1
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+          port: 8080
+          path: /api/v1/health
+        failureThreshold: 2
+        successThreshold: 1
+        periodSeconds: 10
       env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
