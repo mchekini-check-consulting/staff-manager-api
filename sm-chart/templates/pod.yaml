@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx
+  name: sm-api
+  namespace: staff-manager
   labels:
-    app: nginx
+    app: sm-api
 spec:
   containers:
-    - name: nginx
-      image: nginx
+    - name: sm-api
+      image: mchekini/sm-api:1.0
       imagePullPolicy: Always
