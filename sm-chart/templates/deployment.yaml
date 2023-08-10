@@ -68,3 +68,10 @@ spec:
             successThreshold: 1
             failureThreshold: 3
             periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            successThreshold: 1
+            failureThreshold: 30
+            periodSeconds: 10
