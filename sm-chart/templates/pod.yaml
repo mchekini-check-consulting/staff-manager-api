@@ -15,13 +15,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: aws-access-key
-              key: aws_sercet_key
+              key: aws-access-key
         - name: AWS_DEFAULT_REGION
           value: "us-east-2"
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               name: aws-secret-key
-              key: aws-secret-key
+              key: aws_secret_key
       imagePullPolicy: Always
   restartPolicy: Always
