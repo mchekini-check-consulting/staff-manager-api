@@ -12,7 +12,9 @@ import com.example.staffmanagerapi.model.Paysheet;
 import com.example.staffmanagerapi.model.User;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.PaySheetRepository;
+import com.example.staffmanagerapi.utils.DateUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Expression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -22,6 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,8 +52,11 @@ public class PaySheetService {
         if (paySheetDTO.getFile().isEmpty()) {
             throw new FileEmptyException("Veuillez séléctionner un fichier valide non vide");
         }
+        YearMonth yearMonth = DateUtils.parseMonthYear(paySheetDTO.getMonthYear());
+        Integer month = yearMonth.getMonthValue();
+        Integer year = yearMonth.getYear();
 
-        boolean isAttributed = paySheetRepository.existsByCollaboratorAndMonthYear(collaborator, paySheetDTO.getMonthYear());
+        boolean isAttributed = paySheetRepository.existsByCollaboratorAndMonthAndYear(collaborator,month,year);
 
         if (isAttributed) {
             throw new FileNameExistsException("Fiche de paie déjà attribuée");
@@ -78,6 +84,8 @@ public class PaySheetService {
         Paysheet paysheet = Paysheet.builder()
                 .collaborator(collaborator)
                 .monthYear(paySheetDTO.getMonthYear())
+                .month(month)
+                .year(year)
                 .name(name)
                 .build();
 
@@ -85,38 +93,59 @@ public class PaySheetService {
     }
 
     public List<Paysheet> search(SearchPaySheetDTO searchPaySheetDTO, User user) {
+        Optional<YearMonth> startOptional = Optional.ofNullable(DateUtils.parseMonthYear(searchPaySheetDTO.getStartDate()));
+        Optional<YearMonth> endOptional = Optional.ofNullable(DateUtils.parseMonthYear(searchPaySheetDTO.getEndDate()));
+        if (endOptional.isPresent() && startOptional.isPresent() && startOptional.get().isAfter(endOptional.get()) ){
+            throw new BadRequestException("L'intervalle entre "+startOptional.get()+" et "+endOptional.get()+" n'est pas valide, il apparait que la date début est superieure a la date fin.");
+        }
 
         Optional<Collaborator> collaboratorOptional = this.collaboratorRepository.findByEmail(user.getEmail());
         if (collaboratorOptional.isEmpty()) {
-            throw new EntityNotFoundException("Le Collaborateur qui possede l'email " + user.getEmail() + " n'existe pas!");
+            throw new EntityNotFoundException("Le Collaborateur qui possède l'email " + user.getEmail() + " n'éxiste pas!");
         }
         Collaborator collaborator = collaboratorOptional.get();
 
         Specification<Paysheet> specification = Specification
-                .where(this.filterByStartInterval(searchPaySheetDTO))
-                .and(this.filterByEndInterval(searchPaySheetDTO))
+                .where(this.filterByStartInterval(startOptional))
+                .and(this.filterByEndInterval(endOptional))
                 .and(this.filterByCollaborator(collaborator));
 
-        Sort sortOptions = Sort.by(Sort.Direction.DESC, "monthYear");
+        Sort sortOptions = Sort.by(
+                Sort.Order.desc("year"),
+                Sort.Order.desc("month")
+        );
         return this.paySheetRepository.findAll(specification, sortOptions);
     }
 
-    private Specification<Paysheet> filterByStartInterval(SearchPaySheetDTO searchPaySheetDTO) {
-        if (searchPaySheetDTO.getStartDate() != null) {
-            return (root, query, criteriaBuilder) -> {
-                return criteriaBuilder.greaterThanOrEqualTo(root.get("monthYear"), searchPaySheetDTO.getStartDate());
-            };
-        }
-        return null;
+    private Specification<Paysheet> filterByStartInterval(Optional<YearMonth> startDate) {
+        return (root, query, criteriaBuilder) -> {
+            if (startDate.isPresent()) {
+
+                Expression<Integer> compositeDate = criteriaBuilder.sum(
+                        criteriaBuilder.prod(root.get("year"), 100), // Shift the year to left by 2 digits
+                        root.get("month")
+                );
+
+                return criteriaBuilder.greaterThanOrEqualTo(compositeDate, startDate.get().getYear() * 100 + startDate.get().getMonthValue());
+            } else {
+                return null;
+            }
+        };
     }
 
-    private Specification<Paysheet> filterByEndInterval(SearchPaySheetDTO searchPaySheetDTO) {
-        if (searchPaySheetDTO.getEndDate() != null) {
-            return (root, query, criteriaBuilder) -> {
-                return criteriaBuilder.lessThanOrEqualTo(root.get("monthYear"), searchPaySheetDTO.getEndDate());
-            };
-        }
-        return null;
+    private Specification<Paysheet> filterByEndInterval(Optional<YearMonth> endDate) {
+        return (root, query, criteriaBuilder) -> {
+            if (endDate.isPresent()) {
+                Expression<Integer> compositeDate = criteriaBuilder.sum(
+                        criteriaBuilder.prod(root.get("year"), 100), // Shift the year to left by 2 digits
+                        root.get("month")
+                );
+
+                return criteriaBuilder.lessThanOrEqualTo(compositeDate, endDate.get().getYear() * 100 + endDate.get().getMonthValue());
+            } else {
+                return null;
+            }
+        };
     }
 
     private Specification<Paysheet> filterByCollaborator(Collaborator collaborator) {

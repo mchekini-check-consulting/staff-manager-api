@@ -17,7 +17,7 @@ public class CreatePaySheetDTO {
     private Integer collaborator;
 
     @Pattern(regexp = "^(0[1-9]|1[0-2])/\\d{4}$", message = "Veuillez respecter le format suivant : MM/AAAA")
-    @NotNull(message = "le mois et l'année de la fiche de paie est obligatoire")
+    @NotNull(message = "le mois et l'année de la fiche de paie sont obligatoires")
     private String monthYear;
 
     @NotNull(message = "le fichier à upload est obligatoire")

@@ -25,18 +25,6 @@ public class AccessTokenProvider {
 
         try {
             // setup
-
-            /*
-
-            // old request body, not working ( why ?? )
-
-            AccessTokenRequestBody body = new AccessTokenRequestBody(username, password);
-            String jsonBody = gson.toJson(body);
-            log.info("Sending body : {}",jsonBody);
-
-            */
-
-            // using verbose method to create the body , com.google.gson.Gson failed !
             Map<String, String> bodyParams = new HashMap<>();
             bodyParams.put("username", username);
             bodyParams.put("password", password);
@@ -48,25 +36,18 @@ public class AccessTokenProvider {
                     .map(entry -> URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" +
                             URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
                     .collect(Collectors.joining("&"));
-//            log.info("Sending body : {}", encodedBody);
-
             // create http request
             HttpRequest postRequest = HttpRequest.newBuilder()
                     .uri(new URI(ADMIN_API_URL))
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .POST(HttpRequest.BodyPublishers.ofString(encodedBody))
                     .build();
-
             // send it
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpResponse<String> response = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
-
             // Parse the JSON response
             JsonObject jsonResponse = JsonParser.parseString(response.body()).getAsJsonObject();
-
-            // Extract the access_token
             // Done
-            // log.info("Access Token: {}", jsonResponse.get("access_token").getAsString());
             return jsonResponse.get("access_token").getAsString();
 
         } catch (URISyntaxException | IOException | InterruptedException e) {

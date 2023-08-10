@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface PaySheetRepository extends JpaRepository<Paysheet, Integer>, JpaSpecificationExecutor<Paysheet> {
     boolean existsByName(String name);
-    boolean existsByCollaboratorAndMonthYear(Collaborator collaborator, String monthYear);
+    boolean existsByCollaboratorAndMonthAndYear(Collaborator collaborator, Integer month, Integer year);
     Optional<Paysheet> findByName(String name);
 }
