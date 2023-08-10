@@ -36,6 +36,12 @@ spec:
         successThreshold: 1
         periodSeconds: 10
       env:
+        - name: DEPLOYMENT_VERSION
+          value: "1"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
