@@ -14,10 +14,10 @@ public class ApplicationInformationResource {
 
 
     private final AppInformation appInformation;
-    @Value("${kubeVersion}")
+    @Value("${DEPLOYMENT_VERSION:default}")
     private String kubeVersion;
 
-    @Value("${POD_NAME}")
+    @Value("${POD_NAME:default}")
     private String podName;
 
     public ApplicationInformationResource(AppInformation appInformation) {
@@ -31,7 +31,7 @@ public class ApplicationInformationResource {
         return AppInformation.builder()
                 .version(appInformation.getVersion())
                 .name(appInformation.getName())
-                .kubeVersion(kubeVersion)
+                .deploymentVersion(kubeVersion)
                 .podName(podName)
                 .build();
     }

@@ -17,6 +17,6 @@ public class AppInformation {
 
     private String name;
     private String version;
-    private String kubeVersion;
+    private String deploymentVersion;
     private String podName;
 }
