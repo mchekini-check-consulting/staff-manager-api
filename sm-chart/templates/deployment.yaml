@@ -21,7 +21,6 @@ spec:
             - weight: 100
               podAffinityTerm:
                 topologyKey: topology.kubernetes.io/zone
-{{/*      serviceAccountName: sm-api*/}}
       containers:
         - name: sm-api
           imagePullPolicy: Always
@@ -30,11 +29,17 @@ spec:
             - containerPort: 8080
           env:
             - name: AWS_ACCESS_KEY_ID
-              value: "AKIAS7WDEOQ4IJEOYB67"
+              valueFrom:
+                secretKeyRef:
+                  key: aws-access-key
             - name: AWS_DEFAULT_REGION
-              value: "us-east-2"
+              valueFrom:
+                secretKeyRef:
+                  key: aws-region
             - name: AWS_SECRET_ACCESS_KEY
-              value: "DUd3Q+F3vWtmH3OspGKYlZ75+F7mTIJarwAUj9kC"
+              valueFrom:
+                secretKeyRef:
+                  key: aws-secret-key
             - name: kubeVersion
               value: "3.0.0"
             - name: POD_NAME
