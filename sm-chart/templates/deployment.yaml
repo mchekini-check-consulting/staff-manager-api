@@ -24,6 +24,13 @@ spec:
       containers:
         - name: sm-api
           image: mchekini/sm-api:1.0
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu : "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
