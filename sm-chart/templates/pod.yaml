@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: my-first-pod
-      image: mchekini/sm:1.0
+      image: mchekini/sm-api:1.0
       ports:
         - containerPort: 8080
       imagePullPolicy: Always
