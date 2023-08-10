@@ -24,6 +24,13 @@ spec:
       containers:
         - name: sm-api
           image: mchekini/sm-api:1.0
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "2048Mi"
+              cpu: "2000m"
           ports:
             - containerPort: 8080
           env:
