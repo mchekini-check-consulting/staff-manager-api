@@ -31,15 +31,18 @@ spec:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  key: aws-access-key
+                  name: aws-access-key
+                  key: AWS_ACCESS_KEY_ID
             - name: AWS_DEFAULT_REGION
               valueFrom:
                 secretKeyRef:
-                  key: aws-region
+                  name: aws-region
+                  key: AWS_DEFAULT_REGION
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  key: aws-secret-key
+                  name: aws-secret-key
+                  key: AWS_SECRET_ACCESS_KEY
             - name: kubeVersion
               value: "3.0.0"
             - name: POD_NAME
