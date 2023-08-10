@@ -5,6 +5,12 @@ metadata:
   labels:
     app: my-first-pod
 spec:
+  initContainers:
+    - name: my-init-container
+      image: nginx
+      ports:
+        - containerPort: 81
+      imagePullPolicy: Always
   containers:
     - name: my-first-pod
       image: nginx
