@@ -30,4 +30,17 @@ spec:
               name: aws-secret-key
               key: aws-secret-key
       imagePullPolicy: Always
-  restartPolicy: Always
+      livenessProbe:
+        httpGet:
+          port: 8080
+          path: /api/v1/health
+        successThreshold: 1
+        failureThreshold: 3
+        initialDelaySeconds: 10
+      readinessProbe:
+        httpGet:
+          port: 8080
+          path: /api/v1/health
+        successThreshold: 1
+        failureThreshold: 3
+        initialDelaySeconds: 10
