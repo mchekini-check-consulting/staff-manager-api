@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class InvoiceSearchResponseDTO {
+    private Integer id;
+    private String date;
     private String name;
     private String customer;
     private String collaboratorFirstName;
