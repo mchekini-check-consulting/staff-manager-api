@@ -33,6 +33,7 @@ public class InvoiceService {
     }
     public List<InvoiceSearchResponseDTO> search(@Valid List<Long> collaborators, List<Long> clients, List<String> dates){
         Specification<Invoice> spec = Specification.where(null);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
 
         if (collaborators != null && !collaborators.isEmpty()) {
             spec = spec.and(InvoiceSpecifications.withCollaboratorIds(collaborators));
@@ -58,6 +59,8 @@ public class InvoiceService {
         List<InvoiceSearchResponseDTO> invoices =
                 response.stream().map(
                         invoice -> InvoiceSearchResponseDTO.builder()
+                                .id(invoice.getId())
+                                .date(invoice.getMonthYear().format(formatter))
                                 .name(invoice.getName())
                                 .customer(invoice.getCustomer().getCustomerName())
                                 .collaboratorLastName(invoice.getCollaborator().getLastName())
