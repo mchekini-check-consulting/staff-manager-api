@@ -1,37 +1,44 @@
 package com.example.staffmanagerapi.service;
 
-import com.example.staffmanagerapi.dto.document.DocumentSearchResponseDTO;
-import com.example.staffmanagerapi.dto.invoice.InvoiceSearchRequestDTO;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import com.example.staffmanagerapi.dto.invoice.InvoiceSearchResponseDTO;
-import com.example.staffmanagerapi.model.Document;
+import com.example.staffmanagerapi.exception.BadRequestException;
+import com.example.staffmanagerapi.exception.NotFoundException;
 import com.example.staffmanagerapi.model.Invoice;
 import com.example.staffmanagerapi.repository.InvoiceRepository;
-import com.example.staffmanagerapi.utils.DocumentSpecifications;
 import com.example.staffmanagerapi.utils.InvoiceSpecifications;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class InvoiceService {
-    private final InvoiceRepository invoiceRepository;
 
-    public InvoiceService (InvoiceRepository invoiceRepository){
-        this.invoiceRepository= invoiceRepository;
+    @Value("${bucket.factures}")
+    public String bucketInvoiceName;
+
+
+    private final InvoiceRepository invoiceRepository;
+    private final AmazonS3Service amazonS3Service;
+
+    public InvoiceService(InvoiceRepository invoiceRepository, AmazonS3Service amazonS3Service) {
+        this.invoiceRepository = invoiceRepository;
+        this.amazonS3Service = amazonS3Service;
     }
-    public List<InvoiceSearchResponseDTO> search(@Valid List<Long> collaborators, List<Long> clients, List<String> dates){
+
+    public List<InvoiceSearchResponseDTO> search(@Valid List<Long> collaborators, List<Long> clients, List<String> dates) {
         Specification<Invoice> spec = Specification.where(null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
 
@@ -68,5 +75,27 @@ public class InvoiceService {
                                 .build()
                 ).toList();
         return invoices;
+    }
+
+    public byte[] downloadFile(String invoiceName) {
+        if (amazonS3Service.bucketNotExistOrEmpty(bucketInvoiceName)) {
+            throw new BadRequestException("la bucket n'existe pas ou est vide");
+        }
+        try {
+
+            final S3Object s3Object = amazonS3Service.download(bucketInvoiceName, invoiceName);
+            final S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+
+            byte[] content = IOUtils.toByteArray(s3ObjectInputStream);
+            log.info("File downloaded successfully.");
+            s3Object.close();
+            return content;
+        } catch (AmazonS3Exception e) {
+            log.error("Error Message= " + e.getMessage());
+            throw new NotFoundException(e.getMessage());
+        } catch (final Exception ex) {
+            log.error("Error Message= " + ex.getMessage());
+            throw new BadRequestException(ex.getMessage());
+        }
     }
 }
