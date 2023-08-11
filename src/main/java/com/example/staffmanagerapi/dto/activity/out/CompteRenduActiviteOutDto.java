@@ -18,4 +18,5 @@ public class CompteRenduActiviteOutDto {
     private Double absenceDays;
     private Double extraHoursInDays;
     private Double onCallHoursInDays;
+    private Long collaboratorId;
 }
