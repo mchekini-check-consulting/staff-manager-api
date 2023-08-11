@@ -1,18 +1,12 @@
 package com.example.staffmanagerapi.model;
 
-import com.example.staffmanagerapi.enums.DocumentTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.Date;
-
-import static jakarta.persistence.EnumType.STRING;
 
 @Data
 @AllArgsConstructor

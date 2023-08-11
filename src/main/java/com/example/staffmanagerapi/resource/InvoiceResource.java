@@ -4,15 +4,14 @@ import com.example.staffmanagerapi.aspect.authenticated.Authenticated;
 import com.example.staffmanagerapi.dto.invoice.InvoiceSearchRequestDTO;
 import com.example.staffmanagerapi.dto.invoice.InvoiceSearchResponseDTO;
 import com.example.staffmanagerapi.service.InvoiceService;
+import com.example.staffmanagerapi.validators.invoice.InvoiceNameValid;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,5 +36,14 @@ public class InvoiceResource {
 
         List<InvoiceSearchResponseDTO> invoices = invoiceService.search(collaborators, clients, dates);
         return ResponseEntity.status(HttpStatus.OK).body(invoices);
+    }
+
+
+    @GetMapping("/{invoiceName}")
+    public ResponseEntity download(@PathVariable("invoiceName") @InvoiceNameValid String invoiceName){
+        Object object = invoiceService.downloadFile(invoiceName);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + invoiceName + "\"")
+                .body(object);
     }
 }
