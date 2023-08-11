@@ -218,6 +218,7 @@ public class ActivityService {
                     .absenceDays(absenceDays)
                     .extraHoursInDays(extraHoursInDays)
                     .onCallHoursInDays(onCallHoursInDays)
+                    .collaboratorId(collaborator.getId())
                     .build();
 
             log.debug(
