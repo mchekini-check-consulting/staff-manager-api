@@ -2,19 +2,23 @@ package com.example.staffmanagerapi.service;
 
 import com.example.staffmanagerapi.dto.society.SocietyDto;
 import com.example.staffmanagerapi.exception.BadRequestException;
+import com.example.staffmanagerapi.mapper.SocietyMapper;
 import com.example.staffmanagerapi.model.Society;
 import com.example.staffmanagerapi.repository.SocietyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SocietyService {
 
     private final SocietyRepository societyRepository;
+    private final SocietyMapper societyMapper;
 
-    public SocietyService(SocietyRepository societyRepository) {
+    public SocietyService(SocietyRepository societyRepository, SocietyMapper societyMapper) {
         this.societyRepository = societyRepository;
+        this.societyMapper = societyMapper;
     }
 
     public void createSocietyInfo(SocietyDto data) {
@@ -37,5 +41,14 @@ public class SocietyService {
         } else {
             throw new BadRequestException("Society already created");
         }
+    }
+
+    public SocietyDto getSocietyInformations() {
+        Optional<Society> optionalSociety = societyRepository.findAll()
+                .stream().findAny();
+
+        if (optionalSociety.isPresent()) return societyMapper.societyToSocietyDto(optionalSociety.get());
+
+        throw new BadRequestException("Aucune société n'est présente en base");
     }
 }

@@ -18,6 +18,14 @@ public class SocietyResource {
     this.societyService = societyService;
   }
 
+
+  @GetMapping
+  @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
+  public SocietyDto getSocietyInformations(){
+    return societyService.getSocietyInformations();
+
+  }
+
   @PostMapping
   @ResponseStatus(CREATED)
   @Authenticated(authenticated = true, hasAnyRoles = {"admin"})
