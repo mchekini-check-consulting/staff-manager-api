@@ -215,4 +215,26 @@ public class GlobalExceptionHandler {
                             .build()
             );
   }
+
+
+  @ExceptionHandler(UpdateArgumentsNonValid.class)
+  public ResponseEntity<ResponseTemplate> handleException(
+          UpdateArgumentsNonValid ex
+  ) {
+
+    Map<String, String> errorMessages = ex.getErrors();
+
+    for (String fieldError : errorMessages.keySet()) {
+      errorMessages.put(fieldError, errorMessages.get(fieldError));
+    }
+
+    ResponseTemplate response = ResponseTemplate
+            .builder()
+            .error(ErrorsEnum.VALIDATION_ERROR.toString())
+            .message("Vos informations ne sont pas fiable.")
+            .validations(errorMessages)
+            .build();
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
 }

@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface MissionRepository extends JpaRepository<Mission, Integer>, JpaSpecificationExecutor<Mission> {
     Optional<Mission> findMissionByNameMission(String name);
     List<Mission> findAllByCollaborator(Collaborator collaborator);
+    Optional<Mission> findByNameMissionAndIdIsNot(String name, Integer id);
 }

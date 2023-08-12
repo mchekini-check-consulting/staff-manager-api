@@ -2,6 +2,7 @@ package com.example.staffmanagerapi.resource;
 
 import com.example.staffmanagerapi.dto.mission.in.CreateMissionInDto;
 import com.example.staffmanagerapi.dto.mission.in.MissionDto;
+import com.example.staffmanagerapi.dto.mission.in.UpdateMissionInDto;
 import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.service.MissionService;
 import jakarta.validation.Valid;
@@ -45,8 +46,8 @@ public class MissionResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateMission(@PathVariable("id") Integer missionId, @Valid @RequestBody CreateMissionInDto updateMissionDto) {
-        MissionDto missionDto = missionService.updateMission(missionId, updateMissionDto);
-        return ResponseEntity.ok(missionDto);
+    public ResponseEntity<?> updateMission(@PathVariable("id") Integer missionId, @Valid @RequestBody UpdateMissionInDto updateMissionDto) {
+        missionService.updateMission(missionId, updateMissionDto);
+        return ResponseEntity.ok().build();
     }
 }
