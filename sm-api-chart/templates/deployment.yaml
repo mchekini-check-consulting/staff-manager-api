@@ -22,6 +22,8 @@ spec:
                   ports: 
                     - containerPort: 8080 
                   env:
+                    - name: SPRING_PROFILES_ACTIVE
+                      value: prod
                     - name: POD_NAME
                       valueFrom:
                         fieldRef:
