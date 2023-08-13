@@ -47,7 +47,15 @@ public class SocietyService {
         Optional<Society> optionalSociety = societyRepository.findAll()
                 .stream().findAny();
 
-        if (optionalSociety.isPresent()) return societyMapper.societyToSocietyDto(optionalSociety.get());
+        if (optionalSociety.isPresent()) return SocietyDto.builder()
+                .siret(optionalSociety.get().getSiret())
+                .vat(optionalSociety.get().getVat())
+                .name(optionalSociety.get().getName())
+                .email(optionalSociety.get().getEmail())
+                .address(optionalSociety.get().getAddress())
+                .capital(optionalSociety.get().getCapital())
+                .contact(optionalSociety.get().getContact())
+                .build();
 
         throw new BadRequestException("Aucune société n'est présente en base");
     }
