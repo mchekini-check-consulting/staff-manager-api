@@ -1,0 +1,38 @@
+apiVersions: apps/v1
+kind: Deployment
+metadata:
+    name: sm-api
+    labels:
+        application: sm-api
+spec:
+    replicas: 2
+    selector:
+        matchLabels: 
+            application: sm-api
+    template: 
+        metadata:
+            name: sm-api
+            labels:
+                application: sm-api
+        spec:
+            containers:
+                - name: sm-api
+                  image: mchekini/staff-manager-api:1.0.0
+                  imagePullPolicy: Always
+                  ports: 
+                    - containerPort: 8080 
+                  env:
+                    - name: POD_NAME
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.name
+                    - name: AWS_ACCESS_KEY_ID
+                      valueFrom:
+                        secretKeyRef:
+                          name: aws-access-key
+                          key: aws-access-key
+                    - name: AWS_SECRET_ACCESS_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: aws-sec
+                    

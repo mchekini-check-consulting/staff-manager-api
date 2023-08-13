@@ -22,4 +22,11 @@ node("ci-node") {
             sh "sudo docker rmi staff-manager-api"
         }
     }
+
+    stage("deploy-to-k8s") {
+       withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "aws-user"]]) {
+            sh "aws eks update-kubeconfig --region us-east-2 --name sm-cluster"
+            sh "helm upgrade sm-api sm-api-chart --install --create-namespace --namespace staff-manager"
+        } 
+    }
 }
