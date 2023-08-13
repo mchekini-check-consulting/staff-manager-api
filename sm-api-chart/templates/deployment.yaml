@@ -35,5 +35,5 @@ spec:
                       valueFrom:
                         secretKeyRef:
                           name: aws-secret-key
-                          key: AWS_SECRET_ACCESS_KEY
+                          key: aws-secret-key
                     
