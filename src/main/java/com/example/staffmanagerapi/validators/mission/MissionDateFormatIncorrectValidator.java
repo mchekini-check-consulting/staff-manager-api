@@ -13,7 +13,7 @@ public class MissionDateFormatIncorrectValidator implements ConstraintValidator<
     public boolean isValid(String date, ConstraintValidatorContext constraintValidatorContext) {
         try {
             // JAVA LOCALDATE USES uuuu FOR YEARS AND YYYY for ERA
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE
+            DateTimeFormatter formatter = DateTimeFormatter
                     .ofPattern("dd/MM/uuuu")
                     .withResolverStyle(ResolverStyle.STRICT);
             LocalDate parsedDate = LocalDate.parse(date, formatter);

@@ -2,7 +2,11 @@ package com.example.staffmanagerapi.service;
 
 import com.example.staffmanagerapi.dto.mission.in.CreateMissionInDto;
 import com.example.staffmanagerapi.dto.mission.in.MissionDto;
+import com.example.staffmanagerapi.dto.mission.in.UpdateMissionInDto;
+import com.example.staffmanagerapi.exception.BadRequestException;
+import com.example.staffmanagerapi.exception.UpdateArgumentsNonValid;
 import com.example.staffmanagerapi.model.Collaborator;
+import com.example.staffmanagerapi.model.Customer;
 import com.example.staffmanagerapi.model.Mission;
 import com.example.staffmanagerapi.repository.CollaboratorRepository;
 import com.example.staffmanagerapi.repository.CustomerRepository;
@@ -14,12 +18,12 @@ import org.modelmapper.TypeMap;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,11 +83,24 @@ public class MissionService {
     }
 
     @Transactional
-    public MissionDto updateMission(Integer missionId, CreateMissionInDto updateMissionDto) {
-        Mission mission = missionRepository.findById(missionId)
-                .orElseThrow(() -> new RuntimeException(" La Mission avec ID: " + missionId + " est introuvable"));
+    public void updateMission(Integer missionId, UpdateMissionInDto updateMissionDto) {
+        Map<String,String> errors = new HashMap<>();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE
+        Optional<Mission> existByName = missionRepository.findByNameMissionAndIdIsNot(updateMissionDto.getNameMission(),missionId);
+        Optional<Mission> isMissionExist = missionRepository.findById(missionId);
+        if(isMissionExist.isEmpty()){
+            errors.put("missionId","Mission avecc L'id "+missionId+ " +est introuvable");
+        }
+        if(existByName.isPresent()){
+            errors.put("nameMission","Le nom de la mission existe déjà");
+        }
+
+        if(!errors.isEmpty()){
+            throw  new UpdateArgumentsNonValid("Les informations ne sont pas fiable", errors);
+        }
+
+        Mission mission = isMissionExist.get();
+        DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("dd/MM/uuuu")
                 .withResolverStyle(ResolverStyle.STRICT);
 
@@ -97,9 +114,11 @@ public class MissionService {
             log.info("La mission a été affectée au collaborateur avec l'identifiant : " + updateMissionDto.getCollaboratorId());
         }
 
+        Customer customer = customerRepository.getReferenceById(updateMissionDto.getCustomerId());
+        mission.setCustomer(customer);
+
         missionRepository.save(mission);
         log.info("La mission avec l'identifiant " + missionId + " a été mise à jour");
-        return convertEntityToDto(mission);
     }
 
     private MissionDto convertEntityToDto(Mission mission){
