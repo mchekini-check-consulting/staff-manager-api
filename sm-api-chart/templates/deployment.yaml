@@ -15,6 +15,12 @@ spec:
             labels:
                 application: sm-api
         spec:
+            affinity:
+                podAntiAffinity:
+                  preferredDuringSchedulingIgnoredDuringExecution:
+                    - weight: 100
+                      podAffinityTerm:
+                        topologyKey: topology.kubernetes.io/zone
             containers:
                 - name: sm-api
                   image: mchekini/staff-manager-api:1.0.0

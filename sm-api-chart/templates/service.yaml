@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata: 
+    name: sm-api
+    namespace: staff-manager
+spec:
+    selector: 
+        application: sm-api
+    ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+    type: ClusterIP
