@@ -24,6 +24,26 @@ spec:
             containers:
                 - name: sm-api
                   image: mchekini/staff-manager-api:1.0.0
+                  startupProbe:
+                    httpGet:
+                      port: 8080
+                      path: /api/v1/healthcheck
+                    failureThreshold: 12
+                    periodSeconds: 10
+                  livenessProbe:
+                    httpGet:
+                      port: 8080
+                      path: /api/v1/healthcheck
+                    failureThreshold: 2
+                    successThreshold: 1
+                    periodSeconds: 10
+                  readinessProbe:
+                    httpGet:
+                      port: 8080
+                      path: /api/v1/healthcheck
+                    failureThreshold: 2
+                    successThreshold: 1
+                    periodSeconds: 10
                   imagePullPolicy: Always
                   ports: 
                     - containerPort: 8080 
