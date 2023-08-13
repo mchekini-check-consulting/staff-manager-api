@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc-secretsmanager:postgresql://prod-sm-db.chqar689pasc.us-east-2.rds.amazonaws.com:5432/postgres
+    username: sm-prod-db-credentials
+    driverClassName: com.amazonaws.secretsmanager.sql.AWSSecretsManagerPostgreSQLDriver
+
+
+
+bucket:
+  justificatifs: prod-justificatifs-check-consulting
+  fiche-de-paie: prod-fiche-de-paie-check-consulting
+  factures: prod-factures-check-consulting
