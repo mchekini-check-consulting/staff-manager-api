@@ -11,6 +11,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -42,7 +43,7 @@ public class BatchConfiguration {
     public Step step1(JobRepository jobRepository,
                       PlatformTransactionManager transactionManager) {
         return new StepBuilder("step3", jobRepository)
-                .<Collaborator, Collaborator>chunk(5, transactionManager)
+                .<Page<Collaborator>, Collaborator>chunk(5, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
