@@ -9,10 +9,13 @@ oauth2:
       issuer-uri-admin: https://keycloak.check-consulting.net/auth/realms/staff-manager-admin
 
 spring:
+  batch:
+    jdbc:
+      initialize-schema: always
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
       naming:
         strategy: org.hibernate.cfg.ImprovedNamingStrategy
     properties:
