@@ -5,8 +5,8 @@ app:
 oauth2:
   resource-server:
     jwt:
-      issuer-uri-collab: https://keycloak.check-consulting.net/auth/realms/staff-manager-collab
-      issuer-uri-admin: https://keycloak.check-consulting.net/auth/realms/staff-manager-admin
+      issuer-uri-collab: http://ci.check-consulting.net:10000/auth/realms/staff-manager-collab
+      issuer-uri-admin: http://ci.check-consulting.net:10000/auth/realms/staff-manager-admin
 
 spring:
   jpa:

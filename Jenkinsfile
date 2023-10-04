@@ -1,7 +1,7 @@
 node("ci-node") {
 
     def branchName = env.BRANCH_NAME
-    def instancesNumber = 2;
+    def instancesNumber = 1;
     def branchEnvMapping = new HashMap<String, String>()
     branchEnvMapping.put("develop", "int")
     branchEnvMapping.put("qua", "qua")
