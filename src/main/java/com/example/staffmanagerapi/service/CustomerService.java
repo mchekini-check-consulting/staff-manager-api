@@ -74,7 +74,7 @@ public class CustomerService {
     }
     Customer customer = customerRepository.findByCustomerId(customerUpdateInputDto.getId()).get();
 
-    customer.setCustomerEmail(customerUpdateInputDto.getCustomerEmail());
+    customer.setCustomerEmail(customerUpdateInputDto.getCustomerEmail().toUpperCase());
     customer.setCustomerName(customerUpdateInputDto.getCustomerName());
     customer.setCustomerAddress(customerUpdateInputDto.getCustomerAddress());
     customer.setCustomerPhone(customerUpdateInputDto.getCustomerPhone());
