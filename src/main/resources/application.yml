@@ -1,6 +1,6 @@
 app:
   name: staff_manager_api
-  version: 1.0.2
+  version: 1.0.3
 
 oauth2:
   resource-server:
