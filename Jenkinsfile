@@ -15,16 +15,16 @@ node("ci-node") {
         checkout scmGit(branches: [[name: branchName]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mchekini-check-consulting/staff-manager-api.git']])
         commitSHA = sh(script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
     }
-//
-//    stage("Quality Analyses"){
-//
-//        sh "chmod 700 mvnw && ./mvnw clean verify -Dspring.profiles.active=test sonar:sonar \\\n" +
-//                "  -Dsonar.projectKey=staff-manager-api \\\n" +
-//                "  -Dsonar.projectName='staff-manager-api' \\\n" +
-//                "  -Dsonar.host.url=http://ci.check-consulting.net:11001 \\\n" +
-//                "  -Dsonar.token=sqp_5083a3124779353423b8a578cf6ef5f598dd8721"
-//    }
-//
+
+    stage("Quality Analyses"){
+
+        sh "chmod 700 mvnw && ./mvnw clean compile -Dspring.profiles.active=test sonar:sonar \\\n" +
+                "  -Dsonar.projectKey=staff-manager-api \\\n" +
+                "  -Dsonar.projectName='staff-manager-api' \\\n" +
+                "  -Dsonar.host.url=http://ci.check-consulting.net:11001 \\\n" +
+                "  -Dsonar.token=sqp_5cd16e932dce80599cdd184805e41d82fa76dee9"
+    }
+
     stage("build") {
         sh "chmod 777 mvnw"
         sh "./mvnw clean package -DskipTests=true"
