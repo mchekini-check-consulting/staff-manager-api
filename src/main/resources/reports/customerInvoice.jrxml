@@ -150,7 +150,7 @@
 			<textField textAdjust="ScaleFont">
 				<reportElement x="450" y="3" width="100" height="16" uuid="26e6fed0-6fcd-43e0-aecf-84f58a8487dd"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{amountexcludingVAT}+" £ "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amountexcludingVAT}+" € "]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="553" y="0" width="1" height="21" uuid="e9ccf010-4ce3-4b6f-8a59-7b81996dcd82"/>
@@ -173,7 +173,7 @@
 			<textField textAdjust="ScaleFont">
 				<reportElement x="320" y="3" width="121" height="16" uuid="9251f675-b7ba-455d-a223-3388783f2672"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{unitPriceExcludingVAT}+" £ "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unitPriceExcludingVAT}+" € "]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="234" y="3" width="80" height="16" uuid="5304cd83-2cd6-45bb-af37-290a7b4e0f42"/>
@@ -206,7 +206,7 @@
 			<textField>
 				<reportElement x="450" y="15" width="100" height="12" uuid="59c1b092-a632-46bc-844c-041038e9c8aa"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$P{totalHT}+" £"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{totalHT}+" €"]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="318" y="30" width="235" height="20" backcolor="#FFFFFF" uuid="20d9e228-888c-4242-a4ce-71cedf8af3b8"/>
@@ -226,7 +226,7 @@
 			<textField>
 				<reportElement x="450" y="34" width="100" height="12" uuid="3d647190-6372-40c6-a028-f455b1a8b6e8"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$P{tva}+" £ "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{tva}+" € "]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="318" y="50" width="235" height="20" backcolor="#FFFFFF" uuid="c64e8611-f0e3-48f8-8699-a81baa49fe08"/>
@@ -246,7 +246,7 @@
 			<textField>
 				<reportElement x="450" y="54" width="100" height="12" uuid="8df8a03a-3568-4165-b6f0-99444cdcabcb"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$P{totalTTC}+" £"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{totalTTC}+" €"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
@@ -263,7 +263,7 @@
 			<textField textAdjust="ScaleFont">
 				<reportElement x="0" y="125" width="554" height="21" forecolor="#003399" uuid="a0fc2b81-167f-42d2-a736-773deff0a301"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{company-name}+" au capital de "+$P{company-capital}+" £ \n"+$P{company-adress}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company-name}+" au capital de "+$P{company-capital}+" € \n"+$P{company-adress}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report">
 				<reportElement x="-1" y="72" width="554" height="15" uuid="fe86e507-b215-493c-94a7-26495809a5ab">
