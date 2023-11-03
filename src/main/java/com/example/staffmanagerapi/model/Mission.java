@@ -36,4 +36,5 @@ public class Mission {
     private String customerContactEmail;
     private String customerContactPhone;
     private String missionDescription;
+    private Integer tauxJournalier;
 }

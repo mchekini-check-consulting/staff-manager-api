@@ -7,10 +7,7 @@ import com.example.staffmanagerapi.enums.ActivityCategoryEnum;
 import com.example.staffmanagerapi.exception.MultipleSocietiesFoundException;
 import com.example.staffmanagerapi.exception.NoMissionFoundForCollaborator;
 import com.example.staffmanagerapi.model.*;
-import com.example.staffmanagerapi.repository.ActivityRepository;
-import com.example.staffmanagerapi.repository.CollaboratorRepository;
-import com.example.staffmanagerapi.repository.InvoiceRepository;
-import com.example.staffmanagerapi.repository.SocietyRepository;
+import com.example.staffmanagerapi.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -287,8 +284,8 @@ public class ActivityService {
                     new CustomerInvoiceDetail(
                             ActivityCategoryEnum.JOUR_TRAVAILLE,
                             billedDays,
-                            PRIX_UNITAIRE_JOUR_TRAVAILLE, // 100 £ pour les jours tavaillés, a ramener de la base plutard, la c'est un constant
-                            billedDays * PRIX_UNITAIRE_JOUR_TRAVAILLE
+                            Double.valueOf(mission.getTauxJournalier()),
+                            billedDays * mission.getTauxJournalier()
                     )
             );
             invoiceDetails.add(
@@ -344,7 +341,7 @@ public class ActivityService {
                     + collaborator.getLastName().replace(" ", "_");
             String pdfReportName = pdfName + ".pdf";
             log.info("Génération du rapport pdf au nom : {}", pdfReportName);
-            byte[] pdfBytes =  this.jasperReportService.generateReport("reports/customerInvoice.jrxml", invoiceDetails, extraReportParams, pdfName);
+            byte[] pdfBytes = this.jasperReportService.generateReport("reports/customerInvoice.jrxml", invoiceDetails, extraReportParams, pdfName);
 
             saveInvoiceInDatabase(currentMonth, mission, pdfReportName);
             saveToS3AndDeleteFromDirectory(pdfReportName, pdfBytes);
@@ -373,7 +370,7 @@ public class ActivityService {
         viderJasperTempDirectory();
     }
 
-    public void viderJasperTempDirectory(){
+    public void viderJasperTempDirectory() {
         log.info("Suppression des fichiers du dossier temp ...");
         String directoryPath = "src/main/resources/reports/temp/";
         File directory = new File(directoryPath);

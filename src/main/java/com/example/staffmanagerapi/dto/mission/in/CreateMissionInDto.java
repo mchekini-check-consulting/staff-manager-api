@@ -48,4 +48,8 @@ public class CreateMissionInDto {
     @Pattern(regexp = "^\\d{10}$", message = "Numéro invalide")
     private String customerContactPhone;
     private String missionDescription;
+
+    @NotNull(message="Le taux journalier est obligatoire")
+    @Min(value = 0, message="Le taux journalier n'est pas valide")
+    private Integer tauxJournalier;
 }

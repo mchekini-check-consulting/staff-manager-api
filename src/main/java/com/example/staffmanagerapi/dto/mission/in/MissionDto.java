@@ -25,7 +25,7 @@ import java.time.LocalDate;
         "customerContactPhone",
         "collaboratorFirstName",
         "collaboratorLastName",
-        "missionDescription"
+        "missionDescription",
 
 })
 public class MissionDto {
@@ -47,5 +47,6 @@ public class MissionDto {
     private String customerContactEmail;
     private String customerContactPhone;
     private String missionDescription;
+    private Integer tauxJournalier;
 
 }
