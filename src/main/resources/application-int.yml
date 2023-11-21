@@ -1,8 +1,9 @@
 spring:
   datasource:
-    url: jdbc-secretsmanager:postgresql://staff-manager.cnhwy1ogcfeu.us-east-1.rds.amazonaws.com:5432/postgres
-    username: sm-int-db-credentials
-    driverClassName: com.amazonaws.secretsmanager.sql.AWSSecretsManagerPostgreSQLDriver
+    url: jdbc:postgresql://staff-manager-db:5432/postgres
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
 
 
 

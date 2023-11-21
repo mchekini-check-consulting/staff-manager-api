@@ -7,6 +7,15 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=${ACTIVE_PROFILE}
+  staff-manager-db:
+    image: postgres
+    container_name: staff-manager-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
 
 networks:
   default:
